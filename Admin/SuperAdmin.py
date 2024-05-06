@@ -14,7 +14,7 @@ Pword = "dbadmin"
 db_nameCR = "CashRegister"
 db_nameVD = "Vending"
 db_nameRS = "Restaurant"
-db_nameUS = "User"
+db_nameUS = "Users"
 
 class DatabaseManager:
     def __init__(self, host, user, password):
@@ -110,7 +110,6 @@ class DatabaseManager:
 
     def add_dummy_data(self, db_name, script_path):
         return self.execute_sql_script(db_name, script_path)
-
 
 class RestoreBackup:
     def __init__(self, db_manager):
@@ -220,7 +219,7 @@ class ManagementDashboard(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Management Dashboard')
-        self.setGeometry(100, 100, 800, 600)
+        self.setGeometry(100, 100, 1200, 800)
 
         main_layout = QVBoxLayout(self)
         main_layout.setAlignment(Qt.AlignCenter)
@@ -282,8 +281,8 @@ class ManagementDashboard(QWidget):
         for btn_data in buttons_data:
             button = QPushButton()
             button.setIcon(QIcon(ICONS_FOLDER + btn_data["icon"]))
-            button.setIconSize(QSize(150, 150))
-            button.setFixedSize(200, 200)
+            button.setIconSize(QSize(100, 100))
+            button.setFixedSize(150, 150)
             button.clicked.connect(btn_data["function"])
             button.setStyleSheet("background-color: #555555; color: white; border: none;")
 
@@ -540,30 +539,37 @@ class ManagementDashboard(QWidget):
         return box
 
     def drop_tables(self):
-        # Implement logic to drop tables in the database
-        db_names = [db_nameUS, db_nameCR, db_nameVD, db_nameRS]  # List of databases to drop tables from
-        tables_to_drop = ["table1", "table2", "table3"]  # List of tables to drop, replace with actual table names
-
         conn = None
         try:
-            conn = pymysql.connect(host=Hname, user=Uname, password=Pword)
+            # Connect to MySQL without specifying a database
+            conn = pymysql.connect(
+                host=Hname,
+                user=Uname,
+                password=Pword
+            )
 
-            for db_name in db_names:
-                if self.check_database_exists(db_name):
-                    cursor = conn.cursor()
-                    for table in tables_to_drop:
-                        cursor.execute(f"DROP TABLE IF EXISTS {db_name}.{table}")
-                    conn.commit()
-                    print(f"Tables dropped successfully in database: {db_name}")
-                    QMessageBox.information(self, "Success", f"Tables dropped successfully in '{db_name}' database.")
-                else:
-                    print(f"Database '{db_name}' does not exist.")
-                    QMessageBox.warning(self, "Warning", f"Database '{db_name}' does not exist.")
+            # Create a cursor object to execute SQL queries
+            cursor = conn.cursor()
+
+            # Get a list of databases
+            cursor.execute("SHOW DATABASES")
+            databases = cursor.fetchall()
+
+            # Exclude system databases
+            databases = [db[0] for db in databases if
+                         db[0] not in ("information_schema", "mysql", "performance_schema", "sys")]
+
+            # Drop all user-created databases
+            for db_name in databases:
+                cursor.execute(f"DROP DATABASE {db_name}")
+                message = f"Database '{db_name}' dropped successfully."
+                QMessageBox.information(None, "Success", message)
+
+            QMessageBox.information(None, "Success", "All user-created databases dropped successfully.")
 
         except pymysql.Error as e:
-            error_message = f"Error dropping tables: {e}"
-            print(error_message)
-            QMessageBox.critical(self, "Error", error_message)
+            error_message = f"Error dropping databases: {e}"
+            QMessageBox.critical(None, "Error", error_message)
         finally:
             if conn:
                 conn.close()
