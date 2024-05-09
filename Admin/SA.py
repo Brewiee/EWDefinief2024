@@ -14,7 +14,6 @@ Pword = "dbadmin"
 db_nameCR = "CashRegister"
 db_nameVD = "Vending"
 db_nameRS = "Restaurant"
-db_nameUS = "Users"
 
 class DatabaseManager:
     def __init__(self, host, user, password):
@@ -110,6 +109,7 @@ class DatabaseManager:
 
     def add_dummy_data(self, db_name, script_path):
         return self.execute_sql_script(db_name, script_path)
+
 
 class RestoreBackup:
     def __init__(self, db_manager):
@@ -219,7 +219,7 @@ class ManagementDashboard(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Management Dashboard')
-        self.setGeometry(100, 100, 1200, 800)
+        self.setGeometry(100, 100, 800, 600)
 
         main_layout = QVBoxLayout(self)
         main_layout.setAlignment(Qt.AlignCenter)
@@ -236,7 +236,6 @@ class ManagementDashboard(QWidget):
             {"text": "Cash Register", "icon": "create_cash_register.png", "function": self.create_cash_register},
             {"text": "Vending", "icon": "create_vending.png", "function": self.create_vending},
             {"text": "Restaurant", "icon": "create_restaurant.png", "function": self.create_restaurant},
-            {"text": "Users", "icon": "create_users.png", "function": self.create_users},
             {"text": "All", "icon": "create_all.png", "function": self.create_all},
         ])
         boxes_layout.addWidget(create_box)
@@ -246,7 +245,6 @@ class ManagementDashboard(QWidget):
             {"text": "Cash Register", "icon": "backup_cash_register.png", "function": self.backup_cash_register},
             {"text": "Vending", "icon": "backup_vending.png", "function": self.backup_vending},
             {"text": "Restaurant", "icon": "backup_restaurant.png", "function": self.backup_restaurant},
-            {"text": "Users", "icon": "backup_users.png", "function": self.backup_users},
             {"text": "All", "icon": "backup_all.png", "function": self.backup_all},
         ])
         boxes_layout.addWidget(backup_box)
@@ -256,7 +254,6 @@ class ManagementDashboard(QWidget):
             {"text": "Cash Register", "icon": "restore_cash_register.png", "function": self.restore_cash_register},
             {"text": "Vending", "icon": "restore_vending.png", "function": self.restore_vending},
             {"text": "Restaurant", "icon": "restore_restaurant.png", "function": self.restore_restaurant},
-            {"text": "Users", "icon": "restore_users.png", "function": self.restore_users},
             {"text": "All", "icon": "restore_all.png", "function": self.restore_all},
         ])
         boxes_layout.addWidget(restore_box)
@@ -281,10 +278,10 @@ class ManagementDashboard(QWidget):
         for btn_data in buttons_data:
             button = QPushButton()
             button.setIcon(QIcon(ICONS_FOLDER + btn_data["icon"]))
-            button.setIconSize(QSize(100, 100))
-            button.setFixedSize(150, 150)
+            button.setIconSize(QSize(150, 150))
+            button.setFixedSize(200, 200)
             button.clicked.connect(btn_data["function"])
-            button.setStyleSheet("background-color: #33333; color: white; border: none;")
+            button.setStyleSheet("background-color: #555555; color: white; border: none;")
 
             label = QLabel(btn_data["text"])
             label.setAlignment(Qt.AlignCenter)
@@ -365,7 +362,7 @@ class ManagementDashboard(QWidget):
         return choice == QMessageBox.Yes
 
     def create_cash_register(self):
-        db_name = db_nameCR
+        db_name = "CashRegister"
         if self.check_database_exists(db_name):
             QMessageBox.information(self, "Database Exists",
                                     f"The '{db_name}' database already exists. I did not create a new database.")
@@ -377,7 +374,7 @@ class ManagementDashboard(QWidget):
                     self.add_dummy_data(db_name, os.path.join("Data", f'Dummy_Data_{db_name}.sql'))
 
     def create_vending(self):
-        db_name = db_nameVD
+        db_name = "Vending"
         if self.check_database_exists(db_name):
             QMessageBox.information(self, "Database Exists",
                                     f"The '{db_name}' database already exists. I did not create a new database.")
@@ -389,19 +386,7 @@ class ManagementDashboard(QWidget):
                     self.add_dummy_data(db_name, os.path.join("Data", f'Dummy_Data_{db_name}.sql'))
 
     def create_restaurant(self):
-        db_name = db_nameRS
-        if self.check_database_exists(db_name):
-            QMessageBox.information(self, "Database Exists",
-                                    f"The '{db_name}' database already exists. I did not create a new database.")
-            return
-
-        if self.create_database(db_name):
-            if self.execute_sql_script(db_name, os.path.join("Data", f"table_queries_{db_name}.sql")):
-                if self.ask_for_dummy_data(db_name):
-                    self.add_dummy_data(db_name, os.path.join("Data", f'Dummy_Data_{db_name}.sql'))
-
-    def create_users(self):
-        db_name = db_nameUS
+        db_name = "Restaurant"
         if self.check_database_exists(db_name):
             QMessageBox.information(self, "Database Exists",
                                     f"The '{db_name}' database already exists. I did not create a new database.")
@@ -416,7 +401,6 @@ class ManagementDashboard(QWidget):
         self.create_cash_register()
         self.create_vending()
         self.create_restaurant()
-        self.create_users()
 
     def check_database_exists(self, db_name):
         try:
@@ -432,22 +416,18 @@ class ManagementDashboard(QWidget):
                 conn.close()
 
     def backup_cash_register(self):
-        self.backup_database(db_nameCR)
+        self.backup_database("CashRegister")
 
     def backup_vending(self):
-        self.backup_database(db_nameVD)
+        self.backup_database("Vending")
 
     def backup_restaurant(self):
-        self.backup_database(db_nameRS, ignore_tables=["order", "table"])
-
-    def backup_users(self):
-        self.backup_database(db_nameUS)
+        self.backup_database("Restaurant", ignore_tables=["order", "table"])
 
     def backup_all(self):
         self.backup_cash_register()
         self.backup_vending()
         self.backup_restaurant()
-        self.backup_users()
 
     def backup_database(self, db_name, ignore_tables=None):
         conn = None
@@ -495,26 +475,21 @@ class ManagementDashboard(QWidget):
 
     def restore_cash_register(self):
         print("Restore Cash Register button clicked.")
-        self.restore_backup.restore_backup(db_nameUS)
+        self.restore_backup.restore_backup("CashRegister")
 
     def restore_vending(self):
         print("Restore Vending button clicked.")
-        self.restore_backup.restore_backup(db_nameVD)
+        self.restore_backup.restore_backup("Vending")
 
     def restore_restaurant(self):
         print("Restore Restaurant button clicked.")
-        self.restore_backup.restore_backup(db_nameRS)
-
-    def restore_users(self):
-        print("Restore Users button clicked.")
-        self.restore_backup.restore_backup(db_nameUS)
+        self.restore_backup.restore_backup("Restaurant")
 
     def restore_all(self):
         print("Restore All button clicked.")
-        self.restore_backup.restore_backup(db_nameCR)
-        self.restore_backup.restore_backup(db_nameVD)
-        self.restore_backup.restore_backup(db_nameRS)
-        self.restore_backup.restore_users(db_nameUS)
+        self.restore_backup.restore_backup("CashRegister")
+        self.restore_backup.restore_backup("Vending")
+        self.restore_backup.restore_backup("Restaurant")
 
     def create_drop_box(self):
         box = QGroupBox("Drop")
@@ -526,7 +501,7 @@ class ManagementDashboard(QWidget):
         drop_button.setIconSize(QSize(150, 150))
         drop_button.setFixedSize(200, 200)
         drop_button.clicked.connect(self.drop_tables)
-        drop_button.setStyleSheet("background-color: #33333; color: white; border: none;")
+        drop_button.setStyleSheet("background-color: #555555; color: white; border: none;")
 
         drop_label = QLabel("Drop Tables")
         drop_label.setAlignment(Qt.AlignCenter)
@@ -539,37 +514,30 @@ class ManagementDashboard(QWidget):
         return box
 
     def drop_tables(self):
+        # Implement logic to drop tables in the database
+        db_names = ["CashRegister", "Vending", "Restaurant"]  # List of databases to drop tables from
+        tables_to_drop = ["table1", "table2", "table3"]  # List of tables to drop, replace with actual table names
+
         conn = None
         try:
-            # Connect to MySQL without specifying a database
-            conn = pymysql.connect(
-                host=Hname,
-                user=Uname,
-                password=Pword
-            )
+            conn = pymysql.connect(host=Hname, user=Uname, password=Pword)
 
-            # Create a cursor object to execute SQL queries
-            cursor = conn.cursor()
-
-            # Get a list of databases
-            cursor.execute("SHOW DATABASES")
-            databases = cursor.fetchall()
-
-            # Exclude system databases
-            databases = [db[0] for db in databases if
-                         db[0] not in ("information_schema", "mysql", "performance_schema", "sys")]
-
-            # Drop all user-created databases
-            for db_name in databases:
-                cursor.execute(f"DROP DATABASE {db_name}")
-                message = f"Database '{db_name}' dropped successfully."
-                QMessageBox.information(None, "Success", message)
-
-            QMessageBox.information(None, "Success", "All user-created databases dropped successfully.")
+            for db_name in db_names:
+                if self.check_database_exists(db_name):
+                    cursor = conn.cursor()
+                    for table in tables_to_drop:
+                        cursor.execute(f"DROP TABLE IF EXISTS {db_name}.{table}")
+                    conn.commit()
+                    print(f"Tables dropped successfully in database: {db_name}")
+                    QMessageBox.information(self, "Success", f"Tables dropped successfully in '{db_name}' database.")
+                else:
+                    print(f"Database '{db_name}' does not exist.")
+                    QMessageBox.warning(self, "Warning", f"Database '{db_name}' does not exist.")
 
         except pymysql.Error as e:
-            error_message = f"Error dropping databases: {e}"
-            QMessageBox.critical(None, "Error", error_message)
+            error_message = f"Error dropping tables: {e}"
+            print(error_message)
+            QMessageBox.critical(self, "Error", error_message)
         finally:
             if conn:
                 conn.close()
@@ -578,4 +546,4 @@ if __name__ == "__main__":
     app = QApplication([])
     window = ManagementDashboard()
     window.show()
-    app.exec()
+    app.exec_()
