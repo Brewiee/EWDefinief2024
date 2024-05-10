@@ -261,7 +261,11 @@ class ManagementDashboard(QWidget):
         ])
         boxes_layout.addWidget(restore_box)
 
-        drop_box = self.create_drop_box()
+        # Create "Drop" box
+        drop_box = self.create_button_box("Drop", [
+            {"text": "Drop Tables", "icon": "drop.png", "function": self.drop_tables},
+            {"text": "Panic button", "icon": "panic.png", "function": self.panic},
+        ])
         boxes_layout.addWidget(drop_box)
 
         # Add the boxes layout to the main layout
@@ -516,28 +520,6 @@ class ManagementDashboard(QWidget):
         self.restore_backup.restore_backup(db_nameRS)
         self.restore_backup.restore_users(db_nameUS)
 
-    def create_drop_box(self):
-        box = QGroupBox("Drop")
-        layout = QVBoxLayout()
-        layout.setAlignment(Qt.AlignCenter)
-
-        drop_button = QPushButton()
-        drop_button.setIcon(QIcon(ICONS_FOLDER + "drop.png"))  # Add an appropriate icon for dropping tables
-        drop_button.setIconSize(QSize(150, 150))
-        drop_button.setFixedSize(200, 200)
-        drop_button.clicked.connect(self.drop_tables)
-        drop_button.setStyleSheet("background-color: #33333; color: white; border: none;")
-
-        drop_label = QLabel("Drop Tables")
-        drop_label.setAlignment(Qt.AlignCenter)
-        drop_label.setStyleSheet("color: white;")
-
-        layout.addWidget(drop_button)
-        layout.addWidget(drop_label)
-
-        box.setLayout(layout)
-        return box
-
     def drop_tables(self):
         conn = None
         try:
@@ -573,6 +555,8 @@ class ManagementDashboard(QWidget):
         finally:
             if conn:
                 conn.close()
+    def panic(self):
+        print("Panic button clicked.")
 
 if __name__ == "__main__":
     app = QApplication([])
