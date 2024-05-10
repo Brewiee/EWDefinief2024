@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS menuitems (
     Description TEXT,
     Price DECIMAL(10,2),
     Category VARCHAR(255)
+);
 
 CREATE TABLE IF NOT EXISTS users (
     UserID INT PRIMARY KEY,
@@ -12,12 +13,14 @@ CREATE TABLE IF NOT EXISTS users (
     Role ENUM('admin', 'staff'),
     FullName VARCHAR(255),
     ContactInfo VARCHAR(255)
+);
 
 CREATE TABLE IF NOT EXISTS tables (
     TableID INT PRIMARY KEY,
     Number INT,
     Seats INT,
     Status ENUM('available', 'occupied', 'reserved')
+);
 
 CREATE TABLE IF NOT EXISTS orders (
     OrderID INT PRIMARY KEY,
@@ -27,6 +30,7 @@ CREATE TABLE IF NOT EXISTS orders (
     Status ENUM('placed', 'prepared', 'served', 'paid'),
     FOREIGN KEY (UserID) REFERENCES users(UserID),
     FOREIGN KEY (TableNumber) REFERENCES tables(TableID)
+);
 
 CREATE TABLE IF NOT EXISTS orderdetails (
     OrderDetailID INT PRIMARY KEY,
@@ -36,6 +40,7 @@ CREATE TABLE IF NOT EXISTS orderdetails (
     Subtotal DECIMAL(10,2),
     FOREIGN KEY (OrderID) REFERENCES orders(OrderID),
     FOREIGN KEY (ItemID) REFERENCES menuitems(ItemID)
+);
 
 CREATE TABLE IF NOT EXISTS customer (
     customer_id INT PRIMARY KEY,
@@ -43,6 +48,7 @@ CREATE TABLE IF NOT EXISTS customer (
     address VARCHAR(255),
     email VARCHAR(100),
     phone_number VARCHAR(20)
+);
 
 CREATE TABLE IF NOT EXISTS reservation (
     reservation_id INT PRIMARY KEY,
@@ -53,3 +59,4 @@ CREATE TABLE IF NOT EXISTS reservation (
     TableID INT,
     FOREIGN KEY (customer_id) REFERENCES customer(customer_id),
     FOREIGN KEY (TableID) REFERENCES tables(TableID)
+);
