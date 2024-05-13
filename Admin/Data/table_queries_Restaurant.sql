@@ -6,20 +6,11 @@ CREATE TABLE IF NOT EXISTS menuitems (
     Category VARCHAR(255)
 );
 
-CREATE TABLE IF NOT EXISTS users (
-    UserID INT PRIMARY KEY,
-    Username VARCHAR(255),
-    Password VARCHAR(255),
-    Role ENUM('admin', 'staff'),
-    FullName VARCHAR(255),
-    ContactInfo VARCHAR(255)
-);
-
 CREATE TABLE IF NOT EXISTS tables (
     TableID INT PRIMARY KEY,
     Number INT,
     Seats INT,
-    Status ENUM('available', 'occupied', 'reserved')
+    Status ENUM('available', 'occupied', 'reserved', 'locked')
 );
 
 CREATE TABLE IF NOT EXISTS orders (
