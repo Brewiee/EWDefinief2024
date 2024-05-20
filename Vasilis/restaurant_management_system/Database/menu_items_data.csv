@@ -1,0 +1,47 @@
+ItemID,Name,Description,Price,Category
+10,"PITA CHICKEN","Grilled Chicken fillet , Mustard Mayonaise, Salad,Tomato and Red Onion",9.90,"Our Famous"
+11,"PITA VEGA","Grilled Vegetables , Tzatziki, Fresh Spinach,Tomato and Red Onion",9.90,"Our Famous"
+12,"PITA FALAFEL","Homemade Falafel , Tzatziki, Fresh Spinach, Beatrootand Feta",9.90,"Our Famous"
+13,"PITA HALOUMI","Fried Haloumi Cheese, Mustard Mayonaise, Salad, Tomato and Red Onioins",9.90,"Our Famous"
+14,"PITA BIFTEKI","Grilled Greek Style Burger with truffelmayo, Spinach, Tomato, Red Onions and Feta",9.90,"Our Famous"
+15,"THE KING","100% Beef Burger with Cheddar , Spinach, Tomato, Red Onions and Truffelmayo",10.90,"Greek Burgers"
+16,"THE QUEEN","100% Veggie Burger with Cheddar , Spinach, Tomato, Red Onions and Truffelmayo",10.90,"Greek Burgers"
+17,"LOADED GREEK FRIES GYROS","Fries, gyros, tzaziki, tomato, spring onion, red onion, puffed chickpeas, feta & chilli flakes.",9.90,"Loaded Fries"
+18,"LOADED GREEK FRIES CHICKEN GYROS","Fries, chicken gyros, tzaziki, tomato, spring onion, red onion, puffed chickpeas, feta & chilli flakes.",9.90,"Loaded Fries"
+19,"LOADED GREEK FRIES VEGA","Fries, tzaziki, tomato, spring onion, red onion, roasted chickpea ten, lots of feta & chilli flakes",9.90,"Loaded Fries"
+20,"OLYMPIA for 2 or more","PP Gyros, Suzuki, Souvlaki, chicken fillet, pork steak, lamb chop served with fries, rice, salad and Tzatziki
+
+",19.00,"For the Team"
+21,"POSEIDON for 2 or more","PP Gyros, Souvlaki, chicken fillet, scampi, salmon, calamaris served with fries, rice, salad and tzatziki",19.00,"For the Team"
+22,GYROS,"Kid portion of Gyros ",7.50,"Kids menu"
+23,SOUVLAKIA,"Kid portion of SOUVLAKIA",7.50,"Kids menu"
+24,CHICKENUGGETS,"Kid portion of Chickenuggets",7.50,"Kids menu"
+25,CALAMARES,"Kid portion of Baby Calamares",7.50,"Kids menu"
+26,KEFEDAKIA,"Kid portion of keftedakia",7.50,"Kids menu"
+27,"TZATZIKI WITH PITA BREAD","Tzatziki with traditional pita bread",6.80,"Starter Bites"
+28,"GRILLED PEPPERONIS","Grilled green peppers with herb butter and garlic",7.90,"Starter Bites"
+29,KALAMARIA,"Fried squid rings with lemon mayo",7.20,"Starter Bites"
+30,KALAMARAKIA,"Gefrituurde baby calamaris met tzaziki",8.50,"Starter Bites"
+31,GAVROS,"Fried Sardines with Tzatziki",7.20,"Starter Bites"
+32,CHORIATIKI,"Greek Farmer's Salad",6.20,"Starter Bites"
+33,KEFTEDAKIA,"Home made gehaktballetjes in tomatensaus",8.30,"Starter Bites"
+34,"GARIDES SAGANAKI","scampi’s in een huisgemaakte Feta- tomatensaus",10.20,"Starter Bites"
+35,"HALLOUMI CIGARS","pieces of Halloumi cheese rolled in puff pastry with honey and sesame seeds",8.10,"Starter Bites"
+36,FALAFELBITES,"Falafel geserveerd met Tahinicream
+en vegetable chips",8.10,"Starter Bites"
+37,"FETA SAGANAKI","Feta cheese in a crispy jacket served with sesame",8.10,"Starter Bites"
+38,FRIES,"Greek Style Fries",2.50,Siders
+39,"RED RICE","Greek Style Rice in tomatosaus",2.50,Siders
+40,"KALE SALAD","Greek Style kale salad with vinegar",2.50,Siders
+41,"COCA COLA","Coca cola refreshment Normal/Light/Zero",2.00,Drinks
+42,FANTA,"Fanta refreshment Orange/Lemon",2.00,Drinks
+43,"ICE TEA ","Ice tea with or without gas refreshment Peach/Lemon",2.50,Drinks
+44,"OUZO BOTTLE","Greek Style Ouzo 12 750ml",15.00,Drinks
+45,"PITA GYROS","Gyros, Tzatziki, Salad, Tomato and Red Onion",9.90,"Our Famous"
+46,SOUVLAKIA,"traditional Greek Souvlakis, coleslaw, Tzatziki and fries or rice",14.50,Traditionals
+47,GYROS,"With coleslaw, Tzatziki and fries or rice",13.90,Traditionals
+48,"GYROS MIX","Gyros, Calamares,Tzatziki ,kale salad and fries or rice",14.90,Traditionals
+49,"MIX GRILL","Gyros, Greek Souvlaki, Bifteki, chicken fillet,kale salad and fries or rifst",17.20,Traditionals
+50,BIFTEKI,"Filled minced meat with Feta,pepperonis served with kale sald,Tzatziki and fries or rice",17.20,Traditionals
+51,PAIDAKIA,"lamb chops with fried vegetables and Feta tojpiad and fries",21.50,Traditionals
+52,"METAXA GYROS","Gyros in creamy Metaxasaus with chees on top in the oven, comes with fries rice or kale salad.",15.90,Traditionals
