@@ -14,6 +14,7 @@ from main_menu_vending import main_menu_vending
 from subprocess import Popen
 
 
+
 class LoginDatabaseFunctions(QMainWindow):
     def __init__(self):
 
@@ -239,7 +240,7 @@ class LoginDatabaseFunctions(QMainWindow):
                             self.current_sub_process.terminate()
                         # Start the subprocess corresponding to the selected module
                         if selected_module == "Vending":
-                            self.current_sub_process = Popen(["python", "main_menu_vending.py"])
+                            self.current_sub_process = Popen(["python", "../vending/main.py"])
                         elif selected_module == "Restaurant":
                             self.current_sub_process = Popen(["python", "main_menu_restaurant.py"])
                         elif selected_module == "Cash register":
