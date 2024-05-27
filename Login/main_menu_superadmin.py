@@ -42,7 +42,7 @@ class main_menu_superadmin(QMainWindow):
         subprocess.Popen(["python", "prog_user_manager.py"])
 
     def launch_database_manager(self):
-        subprocess.Popen(["python", "prog_database_manager.py"])
+        subprocess.Popen(["python", "DBManager.py"])
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
