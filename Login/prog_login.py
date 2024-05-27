@@ -56,6 +56,7 @@ class LoginDatabaseFunctions(QMainWindow):
         self.setup_username_section(layout)
         self.setup_password_section(layout)
         self.setup_module_selection(layout)
+        #hahahaha
         self.setup_login_button(layout)
         self.setup_error_label(layout)
 
@@ -242,11 +243,11 @@ class LoginDatabaseFunctions(QMainWindow):
                         if selected_module == "Vending":
                             self.current_sub_process = Popen(["python", "../vending/main.py"])
                         elif selected_module == "Restaurant":
-                            self.current_sub_process = Popen(["python", "main_menu_restaurant.py"])
+                            self.current_sub_process = Popen(["python", "../restaurant/main.py"])
                         elif selected_module == "Cash register":
-                            self.current_sub_process = Popen(["python", "main_menu_cashregister.py"])
+                            self.current_sub_process = Popen(["python", "../cashregister/main.py"])
                         elif selected_module == "SuperAdmin":
-                            self.current_sub_process = Popen(["python", "main_menu_superadmin.py"])
+                            self.current_sub_process = Popen(["python", "../superadmin/main.py"])
                         else:
                             QMessageBox.warning(self, "Login", "Invalid module selected.")
                             return
