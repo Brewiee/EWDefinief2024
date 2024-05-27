@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS orderdetails (
 
 -- Create table for customers
 CREATE TABLE IF NOT EXISTS customer (
-    rs_customer_id INT PRIMARY KEY,
+    rs_customer_id INT PRIMARY KEY AUTO_INCREMENT,
     rs_name VARCHAR(100),
     rs_address VARCHAR(255),
     rs_email VARCHAR(100),
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS customer (
 
 -- Create table for reservations
 CREATE TABLE IF NOT EXISTS reservation (
-    rs_reservation_id INT PRIMARY KEY,
+    rs_reservation_id INT PRIMARY KEY AUTO_INCREMENT,
     rs_customer_id INT,
     rs_reservation_date DATE,
     rs_reservation_time TIME,
