@@ -1,140 +1,136 @@
-import random
 import pygame
-from pygame.locals import *
-from actors import *
+import random
+import time
 
-g_vars = {}
-g_vars['width'] = 416
-g_vars['height'] = 416
-g_vars['fps'] = 30
-g_vars['grid'] = 32
-g_vars['window'] = pygame.display.set_mode([g_vars['width'], g_vars['height']], pygame.HWSURFACE)
+# Initialize pygame
+pygame.init()
 
+# Set up the screen
+screen_width = 800
+screen_height = 600
+screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_caption("Frogger")
 
-class App:
+# Colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GREEN = (0, 255, 0)
+RED = (255, 0, 0)
 
-    def __init__(self):
-        pygame.init()
-        pygame.display.set_caption("Frogger")
+# Frog properties
+frog_width = 40
+frog_height = 40
+frog_x = screen_width // 2 - frog_width // 2
+frog_y = screen_height - frog_height
+frog_speed = 5
 
-        self.running = None
-        self.state = None
-        self.frog = None
-        self.score = None
-        self.lanes = None
-
-        self.clock = pygame.time.Clock()
-        self.font = pygame.font.SysFont('Courier New', 16)
-
-    def init(self):
-        self.running = True
-        self.state = 'START'
-
-        self.frog = Frog(g_vars['width'] / 2 - g_vars['grid'] / 2, 12 * g_vars['grid'], g_vars['grid'])
-        self.frog.attach(None)
-        self.score = Score()
-
-        self.lanes = []
-        self.lanes.append(Lane(1, c=(50, 192, 122)))
-        self.lanes.append(Lane(2, t='log', c=(153, 217, 234), n=2, l=6, spc=350, spd=1.2))
-        self.lanes.append(Lane(3, t='log', c=(153, 217, 234), n=3, l=2, spc=180, spd=-1.6))
-        self.lanes.append(Lane(4, t='log', c=(153, 217, 234), n=4, l=2, spc=140, spd=1.6))
-        self.lanes.append(Lane(5, t='log', c=(153, 217, 234), n=2, l=3, spc=230, spd=-2))
-        self.lanes.append(Lane(6, c=(50, 192, 122)))
-        self.lanes.append(Lane(7, c=(50, 192, 122)))
-        self.lanes.append(Lane(8, t='car', c=(195, 195, 195), n=3, l=2, spc=180, spd=-2))
-        self.lanes.append(Lane(9, t='car', c=(195, 195, 195), n=2, l=4, spc=240, spd=-1))
-        self.lanes.append(Lane(10, t='car', c=(195, 195, 195), n=4, l=2, spc=130, spd=2.5))
-        self.lanes.append(Lane(11, t='car', c=(195, 195, 195), n=3, l=3, spc=200, spd=1))
-        self.lanes.append(Lane(12, c=(50, 192, 122)))
-
-    def event(self, event):
-        if event.type == QUIT:
-            self.running = False
-
-        if event.type == KEYDOWN and event.key == K_ESCAPE:
-            self.running = False
-
-        if self.state == 'START':
-            if event.type == KEYDOWN and event.key == K_RETURN:
-                self.state = 'PLAYING'
-
-        if self.state == 'PLAYING':
-            if event.type == KEYDOWN and event.key == K_LEFT:
-                self.frog.move(-1, 0)
-            if event.type == KEYDOWN and event.key == K_RIGHT:
-                self.frog.move(1, 0)
-            if event.type == KEYDOWN and event.key == K_UP:
-                self.frog.move(0, -1)
-            if event.type == KEYDOWN and event.key == K_DOWN:
-                self.frog.move(0, 1)
-
-    def update(self):
-        for lane in self.lanes:
-            lane.update()
-
-        lane_index = self.frog.y // g_vars['grid'] - 1
-        if self.lanes[lane_index].check(self.frog):
-            self.score.lives -= 1
-            self.score.score = 0
-
-        self.frog.update()
-
-        if (g_vars['height'] - self.frog.y) // g_vars['grid'] > self.score.high_lane:
-            if self.score.high_lane == 11:
-                self.frog.reset()
-                self.score.update(200)
-            else:
-                self.score.update(10)
-                self.score.high_lane = (g_vars['height'] - self.frog.y) // g_vars['grid']
-
-        if self.score.lives == 0:
-            self.frog.reset()
-            self.score.reset()
-            self.state = 'START'
-
-    def draw(self):
-        g_vars['window'].fill((0, 0, 0))
-        if self.state == 'START':
-            self.draw_text("Frogger!", g_vars['width'] / 2, g_vars['height'] / 2 - 15, 'center')
-            self.draw_text("Press ENTER to start playing.", g_vars['width'] / 2, g_vars['height'] / 2 + 15, 'center')
-
-        if self.state == 'PLAYING':
-
-            self.draw_text("Lives: {0}".format(self.score.lives), 5, 8, 'left')
-            self.draw_text("Score: {0}".format(self.score.score), 120, 8, 'left')
-            self.draw_text("High Score: {0}".format(self.score.high_score), 240, 8, 'left')
-
-            for lane in self.lanes:
-                lane.draw()
-            self.frog.draw()
-
-        pygame.display.flip()
-
-    def draw_text(self, t, x, y, a):
-        text = self.font.render(t, False, (255, 255, 255))
-        if a == 'center':
-            x -= text.get_rect().width / 2
-        elif a == 'right':
-            x += text.get_rect().width
-        g_vars['window'].blit(text, [x, y])
-
-    def cleanup(self):
-        pygame.quit()
-        quit()
-
-    def execute(self):
-        if self.init() == False:
-            self.running = False
-        while self.running:
-            for event in pygame.event.get():
-                self.event(event)
-            self.update()
-            self.draw()
-            self.clock.tick(g_vars['fps'])
-        self.cleanup()
+# Car properties
+car_width = 60
+car_height = 40
+car_speed = 7
+cars = []
 
 
-if __name__ == "__main__":
-    gameApp = App()
-    gameApp.execute()
+def create_car():
+    car_x = random.randint(0, screen_width - car_width)
+    car_y = random.randint(50, screen_height - 100)
+    car = pygame.Rect(car_x, car_y, car_width, car_height)
+    return car
+
+
+for _ in range(6):
+    cars.append(create_car())
+
+font = pygame.font.Font(None, 36)
+clock = pygame.time.Clock()
+
+
+def reset_game():
+    global frog_x, frog_y, cars, running, game_over, win, message_time
+    frog_x = screen_width // 2 - frog_width // 2
+    frog_y = screen_height - frog_height
+    cars.clear()
+    for _ in range(6):
+        cars.append(create_car())
+    running = True
+    game_over = False
+    win = False
+    message_time = 0
+
+
+running = True
+game_over = False
+win = False
+message_time = 0
+while running:
+    screen.fill(WHITE)
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                running = False
+            elif event.key == pygame.K_RETURN:
+                if game_over or win:
+                    reset_game()
+
+    if not game_over and not win:
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]:
+            frog_x -= frog_speed
+        if keys[pygame.K_RIGHT]:
+            frog_x += frog_speed
+        if keys[pygame.K_UP]:
+            frog_y -= frog_speed
+        if keys[pygame.K_DOWN]:
+            frog_y += frog_speed
+
+        # Boundaries for the frog
+        if frog_x < 0:
+            frog_x = 0
+        elif frog_x > screen_width - frog_width:
+            frog_x = screen_width - frog_width
+        if frog_y < 0:
+            frog_y = 0
+        elif frog_y > screen_height - frog_height:
+            frog_y = screen_height - frog_height
+
+        # Draw frog
+        pygame.draw.rect(screen, GREEN, (frog_x, frog_y, frog_width, frog_height))
+
+        # Draw cars
+        for car in cars:
+            pygame.draw.rect(screen, BLACK, car)
+            car.x += car_speed
+            if car.x > screen_width:
+                car.x = 0 - car_width
+                car.y = random.randint(50, screen_height - 100)
+
+        # Collision detection
+        frog_rect = pygame.Rect(frog_x, frog_y, frog_width, frog_height)
+        for car in cars:
+            if frog_rect.colliderect(car):
+                game_over = True
+                message_time = time.time()  # Initialize the timer for message flickering
+                break
+
+        # Check if frog reaches the other side
+        if frog_y == 0:
+            win = True
+            message_time = time.time()  # Initialize the timer for message flickering
+
+    # Draw the game-over or win message with flickering effect
+    if game_over or win:
+        current_time = time.time()
+        if int(current_time * 2) % 2 == 0:  # Flicker the message every 0.5 seconds
+            if game_over:
+                text = font.render("You died. Press Enter to restart.", True, RED)
+            elif win:
+                text = font.render("You win! Press Enter to restart.", True, RED)
+            screen.blit(text, (screen_width // 2 - 180, screen_height // 2))
+
+    pygame.display.update()
+    clock.tick(30)
+
+pygame.quit()
