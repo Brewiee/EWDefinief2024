@@ -1,0 +1,103 @@
+---------------------------------------------------------------------
+Databank kassasysteem
+---------------------------------------------------------------------
+Table: Products
+    ProductID (PrimaryKey)('a composition of supplier, category and product name')
+    ProductName
+    UnitPrice ('VAT excluded')
+    Description
+    Quantity
+    MinimumStock
+    MaximumStock
+    CategoryID (ForeignKey)
+    SupplierID (ForeignKey)
+Table: Categories
+    CategoryID (PrimaryKey)
+    CategoryName
+Table: Customers
+    CustomerID (PrimaryKey)
+    FirstName
+    LastName
+    Address
+    VatNo
+    CompanyNo
+    PhoneNo
+    Email
+Table: Invoices
+    InvoiceID (PrimaryKey)
+    CustomerID (ForeignKey)
+    UserID (ForeignKey)
+    PaymentMethodID (ForeignKey)
+    InvoiceDate
+Table: InvoiceLine
+    InvoiceID (PrimaryKey)
+    ProductID (ForeignKey)
+    Quantity
+Table: PaymentMethods
+    PaymentMethodID (PrimaryKey)
+    MethodName
+    Description
+Table: Users
+    UserId (PrimaryKey) ('a composition of firstname and lastname')
+    Password
+    FirstName
+    LastName   
+Table: Suppliers
+    SupplierID (PrimaryKey)
+    SupplierName
+    ContactPerson
+    Address
+    PhoneNumber
+    Email
+
+---------------------------------------------------------------------
+Databank vending machine
+---------------------------------------------------------------------
+Table: Vending Machines
+    ID (Primary Key)
+    Location
+    Type (e.g., snack vending machine, beverage vending machine)
+    Capacity (maximum stock capacity)
+    Current stock
+Table: Products
+    ID (Primary Key)
+    Name
+    Price
+    Category (e.g., snacks, beverages)
+Table: Stock
+    ID (Primary Key)
+    VendingMachineID (Foreign Key to Vending Machines table)
+    ProductID (Foreign Key to Products table)
+    Quantity
+
+---------------------------------------------------------------------
+Databank restaurant
+---------------------------------------------------------------------
+Table: Customers
+    CustomerID (Primary key)
+    Name
+    Phone Number
+    Email
+    Address
+Table: Menu
+    ItemID (Primary key)
+    Name
+    Price
+    Category
+Table: Orders
+    OrderID (Primary key)
+    CustomerID (Foreign key referencing Customers)
+    Date_and_Time
+    Status (e.g., 'Pending', 'Completed', 'Cancelled')
+    TableID (Foreign key referencing Tables)
+Table: Ordered_Items
+    OrderedItemID (Primary key)
+    OrderID (Foreign key referencing Orders)
+    ItemID (Foreign key referencing Menu)
+    Quantity
+    Comments (optional, for special instructions)
+Table: Tables
+    TableID (Primary key)
+    Number
+    Capacity
+    Status (e.g., 'Available', 'Occupied', 'Reserved')

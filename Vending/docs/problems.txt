@@ -1,0 +1,13 @@
+Problems to Address:
+1. Icons not displaying correctly on buttons.
+   - Icon paths are correct.
+   - Icon size is set up correct.
+   - nescessary?
+
+2. Product GUI: when deleting a product and then creating, the ID is not continued from the last available id but continued from the last deleted id.
+
+3. problem vending manager set up machine. vd_inventory_product_id is not generated
+
+
+
+

@@ -1,0 +1,4 @@
+2024-04-30 21:43:22,090 - DEBUG - Start Product Interface
+2024-04-30 21:43:33,533 - DEBUG - Product created: (Product code:131), (Product name: test), (Product price: 1.0), (Product VAT: 1.0)
+2024-04-30 21:45:07,598 - DEBUG - Start Product Interface
+2024-04-30 21:45:14,708 - DEBUG - Product created: (Product code:1), (Product name: test), (Product price: 1.0), (Product VAT: 1.0)

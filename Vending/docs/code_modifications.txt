@@ -1,0 +1,12 @@
+1. Add product_id to create_product method debug logging in class_product_interface
+2. create vending machine manager
+3. add vending machine manager to Main_menu_buttons.py
+4. add open users to Main_menu_buttons.py
+5. add open admin to Main_menu_buttons.py
+6. Change pdf report locations in report manager and stock manager
+7. add product category in product manager
+8. i changed foreign key vd_vending_machine_id on vd_invoice_vending_machine_id in vd_invoice_vending_machine_id on vd_vending_machine_id so check class reports
+9. create extra product manager to add products to vending machines
+10. add close button to the product gui when doubleclicking but not changing anything
+
+
