@@ -39,11 +39,11 @@ INSERT INTO Product (CR_Product_Product_ID, CR_Product_ProductCode, CR_Product_N
 INSERT INTO Product (CR_Product_Product_ID, CR_Product_ProductCode, CR_Product_Name, CR_Product_Price_B, CR_Product_Price_S, CR_Product_Stock_quantity, CR_Product_Min_Stock, CR_Product_Max_Stock, CR_Product_Supplier_ID, CR_Product_Category_ID) VALUES(14, 'PROD014', 'LED TV 32inch', 300.00, 499.00, 35, 25, 50, 1, 7);
 
 -- Dummy data for User table
-INSERT INTO User (CR_User_User_ID, CR_User_UserName, CR_User_Password, CR_User_Function, CR_User_Full_Name) VALUES(1, 'asetinn66', 'password1', 'Admin', 'Mehmet Haleplioglu');
-INSERT INTO User (CR_User_User_ID, CR_User_UserName, CR_User_Password, CR_User_Function, CR_User_Full_Name) VALUES(2, 'keizerkarel', 'password2', 'Cashier', 'Karel Keizer');
-INSERT INTO User (CR_User_User_ID, CR_User_UserName, CR_User_Password, CR_User_Function, CR_User_Full_Name) VALUES(3, 'lizegoos', 'password3', 'Cashier', 'Lize Goos');
-INSERT INTO User (CR_User_User_ID, CR_User_UserName, CR_User_Password, CR_User_Function, CR_User_Full_Name) VALUES(4, 'emmamilou', 'password4', 'Shop Assistant', 'Emma Milou');
-INSERT INTO User (CR_User_User_ID, CR_User_UserName, CR_User_Password, CR_User_Function, CR_User_Full_Name) VALUES(5, 'harryhoog', 'password5', 'Technician', 'Harry Hoog');
+INSERT INTO User (CR_User_User_ID, CR_User_UserName, CR_User_Password, CR_User_Function, CR_User_Firstname, CR_User_Lastname, CR_User_Permission, CR_User_Status) VALUES(1, 'asetinn66', 'ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb', 'Manager', 'Mehmet', 'Haleplioglu', 'Admin', 'Active');
+INSERT INTO User (CR_User_User_ID, CR_User_UserName, CR_User_Password, CR_User_Function, CR_User_Firstname, CR_User_Lastname, CR_User_Permission, CR_User_Status) VALUES(2, 'keizerkarel', 'ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb', 'Cashier', 'Karel', 'Keizer', 'Admin', 'Active');
+INSERT INTO User (CR_User_User_ID, CR_User_UserName, CR_User_Password, CR_User_Function, CR_User_Firstname, CR_User_Lastname, CR_User_Permission, CR_User_Status) VALUES(3, 'lizegoos', 'ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb', 'Cashier', 'Lize', 'Goos', 'Admin', 'Active');
+INSERT INTO User (CR_User_User_ID, CR_User_UserName, CR_User_Password, CR_User_Function, CR_User_Firstname, CR_User_Lastname, CR_User_Permission, CR_User_Status) VALUES(4, 'emmamilou', 'ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb', 'Shop Assistant', 'Emma', 'Milou', 'User', 'Active');
+INSERT INTO User (CR_User_User_ID, CR_User_UserName, CR_User_Password, CR_User_Function, CR_User_Firstname, CR_User_Lastname, CR_User_Permission, CR_User_Status) VALUES(5, 'harryhoog', 'ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb', 'Technician', 'Harry', 'Hoog', 'User', 'Active');
 
 -- Dummy data for Customer table
 INSERT INTO Customer (CR_Customer_Customer_ID, CR_Customer_Name, CR_Customer_Email, CR_Customer_Country, CR_Customer_Address, CR_Customer_Zipcode, CR_Customer_City, CR_Customer_Phone_number, CR_Customer_VAT) VALUES(1, 'John Doe', 'john.doe@example.com', 'Belgium', '123 Main St', '1000', 'BRUSSEL', '123-456-7890', 'BE123456789');
