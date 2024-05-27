@@ -73,9 +73,9 @@ class CustomerWindow(QMainWindow):
                                             QMessageBox.Yes | QMessageBox.No)
         if confirmation == QMessageBox.Yes:
             # Insert customer data into the database
-            db = pymysql.connect(host="localhost", user="dbadmin", password="dbadmin", database="restaurantV2")
+            db = pymysql.connect(host="localhost", user="dbadmin", password="dbadmin", database="restaurant")
             cursor = db.cursor()
-            cursor.execute("INSERT INTO customer (name, email, address, phone_number) VALUES (%s, %s, %s, %s)",
+            cursor.execute("INSERT INTO customer (rs_name, rs_email, rs_address, rs_phone_number) VALUES (%s, %s, %s, %s)",
                            (name, email, address, phone))
             db.commit()
 
@@ -85,7 +85,7 @@ class CustomerWindow(QMainWindow):
 
             # Insert reservation data into the database
             cursor.execute(
-                "INSERT INTO reservation (customer_id, reservation_date, reservation_time, party_size) VALUES (%s, %s, %s, %s)",
+                "INSERT INTO reservation (rs_customer_id, rs_reservation_date, rs_reservation_time, rs_party_size) VALUES (%s, %s, %s, %s)",
                 (customer_id, day, time, amount))
             db.commit()
             db.close()
