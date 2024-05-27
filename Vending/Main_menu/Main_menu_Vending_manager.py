@@ -4,11 +4,11 @@ from PySide6.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QHBoxL
 from PySide6.QtGui import QIcon, QPixmap, QDesktopServices, QFont
 from PySide6.QtCore import Qt, QUrl
 
-from src.Vending_UI.Product_manager.ProductGUI import ProductGUI
-from src.Vending_UI.Stock_manager.inventory_manager_GUI import inventory_manager
-from src.Vending_UI.Report_manager.sales_reports_GUI_v2 import report_manager
-from src.Vending_UI.Vending_machine_manager.Vending_machine_manager_GUI import vending_machine_manager_GUI
-from src.Vending_UI.Log_creator.class_custom_logger import CustomLogger
+from Vending.Product_manager.ProductGUI import ProductGUI
+from Vending.Stock_manager.inventory_manager_GUI import inventory_manager
+from Vending.Report_manager.sales_reports_GUI_v2 import report_manager
+from Vending.Vending_machine_manager.Vending_machine_manager_GUI import VendingMachineManagerGUI
+from Vending.Log_creator.class_custom_logger import CustomLogger
 
 class LoveWindow(QWidget):
     def __init__(self, content):
@@ -120,8 +120,8 @@ class Dashboard(QWidget):
         self.setLayout(main_layout)
 
     def configure_buttons(self, layout):
-        icons_dir = "C:/Syntra/EIndwerk/EIndwerk_final/Joeri/Vending_manager/data/Icons/"
-        button_labels = ["Products", "Vending Machines", "Stock Management", "Reports", "Users", "Admin"]
+        icons_dir = "../Icons/"
+        button_labels = ["Products", "Vending Machines", "Stock Management", "Reports"]
 
         num_buttons = len(button_labels)
         num_columns = 3 if num_buttons >= 9 else 2 if num_buttons >= 6 else 1
@@ -157,7 +157,7 @@ class Dashboard(QWidget):
 
     def open_vending_machines(self):
         self.clear_layout()
-        self.vending_machine_manager = vending_machine_manager_GUI()
+        self.vending_machine_manager = VendingMachineManagerGUI()
         self.vending_machine_manager.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.layout().addWidget(self.vending_machine_manager)
 
@@ -173,15 +173,7 @@ class Dashboard(QWidget):
         self.reports_manager.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.layout().addWidget(self.reports_manager)
 
-    def open_users(self):
-        self.clear_layout()
-        self.logger.log_debug("Users manager activated")
-        # Implement and instantiate the users manager here
 
-    def open_admin(self):
-        self.clear_layout()
-        self.logger.log_debug("Admin manager activated")
-        # Implement and instantiate the admin manager here
 
     def clear_layout(self):
         while self.layout().count():

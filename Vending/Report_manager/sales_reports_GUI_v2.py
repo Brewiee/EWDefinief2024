@@ -1,14 +1,14 @@
-from class_sales_reports import sales_report_manager
+from Vending.Report_manager.class_sales_reports import sales_report_manager
 from PySide6.QtWidgets import (QMainWindow, QApplication, QWidget, QVBoxLayout, QComboBox, QHBoxLayout, QLabel,
                                QDateEdit, QMessageBox, QTableWidgetItem, QTableWidget, QPushButton, QHeaderView,
                                QSizePolicy)
 
 from PySide6.QtCore import Qt, QDate
 import sys
-from sales_graph_widget import SalesGraphWidget
-from class_create_PDF import create_pdf
+from Vending.Report_manager.sales_graph_widget import SalesGraphWidget
+from Vending.PDF_creator.class_create_PDF import create_pdf
 import time
-from src.Vending_UI.Log_creator.class_custom_logger import CustomLogger
+from Vending.Log_creator.class_custom_logger import CustomLogger
 
 class report_manager(QMainWindow):
     def __init__(self):

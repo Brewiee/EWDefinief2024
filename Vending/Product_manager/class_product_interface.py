@@ -1,6 +1,6 @@
 import pymysql
-from src.Vending_UI.Database_connector.class_database_connector import database_connector
-from src.Vending_UI.Log_creator.class_custom_logger import CustomLogger
+from Vending.Database_connector.class_database_connector import database_connector
+from Vending.Log_creator.class_custom_logger import CustomLogger
 
 class product_interface:
     def __init__(self):

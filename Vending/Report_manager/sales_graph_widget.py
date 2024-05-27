@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QHBoxLayout, QWidget
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.pyplot as plt
-import mplcursors  # Import mplcursors library
+
 class SalesGraphWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)

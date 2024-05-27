@@ -2,9 +2,9 @@ from PySide6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, Q
                                QLabel, QLineEdit, QMessageBox, QComboBox)
 from PySide6.QtCore import Qt
 import sys
-from src.Vending_UI.Vending_machine_manager.Vending_machine_interface import vending_machine_interface
-from src.Vending_UI.Log_creator.class_custom_logger import CustomLogger
-from src.Vending_UI.Database_connector.class_database_connector import database_connector
+from Vending.Vending_machine_manager.Vending_machine_interface import vending_machine_interface
+from Vending.Log_creator.class_custom_logger import CustomLogger
+from Vending.Database_connector.class_database_connector import database_connector
 
 
 class VendingMachineManagerGUI(QMainWindow):

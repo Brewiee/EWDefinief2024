@@ -1,6 +1,6 @@
 import sys
-from class_inventory_management import stock_manager
-from class_create_PDF import create_pdf
+from Vending.Stock_manager.class_inventory_management import stock_manager
+from Vending.PDF_creator.class_create_PDF import create_pdf
 from PySide6.QtWidgets import QWidget, QMainWindow, QApplication, QVBoxLayout, QHBoxLayout, QPushButton, QTreeWidgetItem, \
     QMessageBox, QTreeWidget, QHeaderView, QLabel, QLineEdit, QDialog, QGridLayout, QComboBox, QSizePolicy
 from PySide6.QtGui import Qt

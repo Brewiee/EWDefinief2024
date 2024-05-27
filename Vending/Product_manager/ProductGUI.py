@@ -1,9 +1,9 @@
 import sys
 import pymysql
 import os
-from src.Vending_UI.Product_manager.class_product_interface import product_interface
-from src.Vending_UI.Product_manager.class_highlightdelegate import HighlightDelegate
-from src.Vending_UI.Log_creator.class_custom_logger import CustomLogger
+from Vending.Product_manager.class_product_interface import product_interface
+from Vending.Product_manager.class_highlightdelegate import HighlightDelegate
+from Vending.Log_creator.class_custom_logger import CustomLogger
 from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, \
      QInputDialog, QLineEdit, QMessageBox, QWidget, QTreeWidgetItem, QTreeWidget, \
     QHeaderView, QGridLayout, QCompleter, QAbstractItemView

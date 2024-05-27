@@ -3,11 +3,6 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib import colors
 import os
 
-from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
-from reportlab.lib import colors
-import os
-
 class create_pdf:
     def __init__(self, data, headers, filename, title=None, save_path=None):
         self.data = data

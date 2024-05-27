@@ -1,4 +1,4 @@
-from class_database_connector import database_connector
+from Vending.Database_connector.class_database_connector import database_connector
 import pymysql
 
 class stock_manager:

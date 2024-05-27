@@ -1,6 +1,6 @@
 import pymysql
-from class_database_connector import database_connector
-from src.Vending_UI.Log_creator.class_custom_logger import CustomLogger
+from Vending.Database_connector.class_database_connector import database_connector
+from Vending.Log_creator.class_custom_logger import CustomLogger
 
 class sales_report_manager:
     def __init__(self):

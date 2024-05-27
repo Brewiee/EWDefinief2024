@@ -1,5 +1,5 @@
 import pymysql
-from src.Vending_UI.Log_creator.class_custom_logger import CustomLogger
+from Vending.Log_creator.class_custom_logger import CustomLogger
 
 
 class database_connector:
