@@ -11,6 +11,7 @@ import pymysql
 
 
 # Variables
+ICON_FOLDER = "../Icons/"
 windows_base_dir = "C:/Users/M.Akif Haleplioglu/PycharmProjects/Eindwerk_voorbereiding"
 fedora_base_dir = ""
 dbuser = "dbadmin"
@@ -73,15 +74,15 @@ class ProductManagementApp(QMainWindow):
 
         # Modify the icon filenames to use platform-independent paths
         icon_filenames = [
-            os.path.join(base_dir, "Icons", "barcode.png"),
-            os.path.join(base_dir, "Icons", "name.png"),
-            os.path.join(base_dir, "Icons", "purchase.png"),
-            os.path.join(base_dir, "Icons", "selling.png"),
-            os.path.join(base_dir, "Icons", "stock.png"),
-            os.path.join(base_dir, "Icons", "min.png"),
-            os.path.join(base_dir, "Icons", "max.png"),
-            os.path.join(base_dir, "Icons", "supplier.png"),
-            os.path.join(base_dir, "Icons", "category.png"),
+            os.path.join(ICON_FOLDER, "barcode.png"),
+            os.path.join(ICON_FOLDER, "name.png"),
+            os.path.join(ICON_FOLDER, "purchase.png"),
+            os.path.join(ICON_FOLDER, "selling.png"),
+            os.path.join(ICON_FOLDER, "stock.png"),
+            os.path.join(ICON_FOLDER, "min.png"),
+            os.path.join(ICON_FOLDER, "max.png"),
+            os.path.join(ICON_FOLDER, "supplier.png"),
+            os.path.join(ICON_FOLDER, "category.png"),
         ]
 
         field_labels = [
