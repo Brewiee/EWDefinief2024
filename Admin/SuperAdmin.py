@@ -1,10 +1,11 @@
 from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QGroupBox, \
-    QMessageBox, QFileDialog
+    QMessageBox, QFileDialog, QDialog, QDialogButtonBox
 from PySide6.QtGui import QIcon
 from PySide6.QtCore import QSize, Qt
+from datetime import datetime
 import pymysql
 import os
-from datetime import datetime
+import subprocess
 
 # Variables
 ICONS_FOLDER = "../icons/"
@@ -215,6 +216,24 @@ class RestoreBackup:
             cursor.execute(f"ALTER TABLE {referenced_table} ADD INDEX {index_name} ({referenced_column})")
             print(f"Index '{index_name}' created for '{referenced_table}.{referenced_column}'")
 
+class DropTablesDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Drop Tables")
+        self.setModal(True)
+        self.setStyleSheet("background-color: #333333; color: white;")
+
+        main_layout = QVBoxLayout(self)
+
+        label = QLabel("Are you sure you want to drop all user-created databases?")
+        label.setStyleSheet("color: white;")
+        main_layout.addWidget(label)
+
+        button_box = QDialogButtonBox(QDialogButtonBox.Yes | QDialogButtonBox.No)
+        button_box.accepted.connect(self.accept)
+        button_box.rejected.connect(self.reject)
+        main_layout.addWidget(button_box)
+
 class ManagementDashboard(QWidget):
     def __init__(self):
         super().__init__()
@@ -347,7 +366,7 @@ class ManagementDashboard(QWidget):
     def add_dummy_data(self, db_name, data_path):
         try:
             conn = pymysql.connect(host=Hname, user=Uname, password=Pword, database=db_name)
-            with open(data_path, 'r') as file:
+            with open(data_path, 'r', encoding='utf-8') as file:  # Specify encoding here
                 cursor = conn.cursor()
                 for line in file:
                     sql_statement = line.strip()
@@ -393,6 +412,9 @@ class ManagementDashboard(QWidget):
                     self.add_dummy_data(db_name, os.path.join("Data", f'Dummy_Data_{db_name}.sql'))
 
     def create_restaurant(self):
+        # First, create the users database
+        self.create_users()
+
         db_name = db_nameRS
         if self.check_database_exists(db_name):
             QMessageBox.information(self, "Database Exists",
@@ -419,8 +441,9 @@ class ManagementDashboard(QWidget):
     def create_all(self):
         self.create_cash_register()
         self.create_vending()
-        self.create_restaurant()
         self.create_users()
+        self.create_restaurant()
+
 
     def check_database_exists(self, db_name):
         try:
@@ -482,8 +505,6 @@ class ManagementDashboard(QWidget):
                     cursor.execute(f"SELECT * FROM {table_name}")
                     rows = cursor.fetchall()
                     # Generate INSERT statements for each row
-                    # Generate INSERT statements for each row
-                    # Generate INSERT statements for each row
                     for row in rows:
                         columns = ', '.join([f"`{column[0]}`" for column in cursor.description])
                         values = ', '.join([f"'{conn.escape_string(str(data))}'" if data is not None else 'NULL' for data in row])
@@ -521,42 +542,55 @@ class ManagementDashboard(QWidget):
         self.restore_backup.restore_users(db_nameUS)
 
     def drop_tables(self):
-        conn = None
-        try:
-            # Connect to MySQL without specifying a database
-            conn = pymysql.connect(
-                host=Hname,
-                user=Uname,
-                password=Pword
-            )
+        dialog = DropTablesDialog(self)
+        if dialog.exec() == QDialog.Accepted:
+            conn = None
+            try:
+                # Connect to MySQL without specifying a database
+                conn = pymysql.connect(
+                    host=Hname,
+                    user=Uname,
+                    password=Pword
+                )
 
-            # Create a cursor object to execute SQL queries
-            cursor = conn.cursor()
+                # Create a cursor object to execute SQL queries
+                cursor = conn.cursor()
 
-            # Get a list of databases
-            cursor.execute("SHOW DATABASES")
-            databases = cursor.fetchall()
+                # Get a list of databases
+                cursor.execute("SHOW DATABASES")
+                databases = cursor.fetchall()
 
-            # Exclude system databases
-            databases = [db[0] for db in databases if
-                         db[0] not in ("information_schema", "mysql", "performance_schema", "sys")]
+                # Exclude system databases
+                databases = [db[0] for db in databases if
+                             db[0] not in ("information_schema", "mysql", "performance_schema", "sys")]
 
-            # Drop all user-created databases
-            for db_name in databases:
-                cursor.execute(f"DROP DATABASE {db_name}")
-                message = f"Database '{db_name}' dropped successfully."
-                QMessageBox.information(None, "Success", message)
+                # Drop all user-created databases
+                for db_name in databases:
+                    cursor.execute(f"DROP DATABASE {db_name}")
+                    message = f"Database '{db_name}' dropped successfully."
+                    self.show_success_message(message)
 
-            QMessageBox.information(None, "Success", "All user-created databases dropped successfully.")
+                self.show_success_message("All user-created databases dropped successfully.")
 
-        except pymysql.Error as e:
-            error_message = f"Error dropping databases: {e}"
-            QMessageBox.critical(None, "Error", error_message)
-        finally:
-            if conn:
-                conn.close()
+            except pymysql.Error as e:
+                error_message = f"Error dropping databases: {e}"
+                QMessageBox.critical(None, "Error", error_message)
+            finally:
+                if conn:
+                    conn.close()
+
+    def show_success_message(self, message):
+        msg_box = QMessageBox()
+        msg_box.setStyleSheet("background-color: #333333; color: white;")
+        msg_box.setWindowTitle("Success")
+        msg_box.setText(message)
+        msg_box.exec()
+
     def panic(self):
-        print("Panic button clicked.")
+        try:
+            subprocess.Popen(["python", r"Frogger.py"])
+        except FileNotFoundError:
+            print("Unable to find Frogger.")
 
 if __name__ == "__main__":
     app = QApplication([])
