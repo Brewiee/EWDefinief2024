@@ -41,7 +41,32 @@ CREATE TABLE IF NOT EXISTS User (
     CR_User_UserName VARCHAR(255),
     CR_User_Password VARCHAR(255),
     CR_User_Function VARCHAR(255),
-    CR_User_Full_Name VARCHAR(255)
+    CR_User_Firstname VARCHAR(255),
+    CR_User_Lastname VARCHAR(255),
+    CR_User_Permission VARCHAR(255),
+    CR_User_Status VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS table_logs (
+    vd_log_id INT AUTO_INCREMENT PRIMARY KEY,
+    vd_user_id VARCHAR(255),
+    vd_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    table_name VARCHAR(255),
+    column_name VARCHAR(255),
+    old_value VARCHAR(255),
+    new_value VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS login_log (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255),
+    permission VARCHAR(255),
+    login_result VARCHAR(255),
+    login_time TIMESTAMP,
+    ip_address VARCHAR(255),
+    client_info VARCHAR(255),
+    operating_system VARCHAR(255),
+    browser_user_agent VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS Customer (
