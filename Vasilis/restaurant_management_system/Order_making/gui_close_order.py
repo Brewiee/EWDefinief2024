@@ -136,11 +136,15 @@ class ViewOrderToClose(QMainWindow):
                 self.db_connection.rollback()
             self.close()
 
+
+
     def print_order_to_pdf(self):
+
         try:
             # Get current month name and year
             current_month_year = datetime.now().strftime("%B_%Y")
             current_date = datetime.now().strftime("%d_%m_%Y")
+            current_hour_min = datetime.now().strftime("%H_%M")
             # Generate a unique identifier
             unique_id = str(uuid.uuid4().hex)[:8]  # Get the first 8 characters of a UUID
             # Construct the directory name
@@ -148,13 +152,15 @@ class ViewOrderToClose(QMainWindow):
 
             # Construct the filename with the unique identifier
             date_directory = os.path.join(directory_name, current_date)
-            filename = os.path.join(date_directory, f"Receipt_{self.table_number}_{unique_id}.pdf")
+            filename = os.path.join(date_directory, f"Receipt_{self.table_number}_!{current_hour_min}!_{unique_id}.pdf")
 
             # Create the directories if they don't exist
             if not os.path.exists(directory_name):
                 os.makedirs(directory_name)
+
             if not os.path.exists(date_directory):
                 os.makedirs(date_directory)
+
 
             # Combine similar items
             combined_items = {}
