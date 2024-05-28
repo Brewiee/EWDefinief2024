@@ -199,9 +199,9 @@ class ViewOrderToClose(QMainWindow):
 
             total_after_tax = total_before_tax * (1 + TAX)
             pdf.cell(200, 10, txt="", ln=True)  # Add an empty line
-            pdf.cell(200, 10, txt=f"Total before tax: Eur {total_before_tax:.2f}", ln=True, align="R", border= True)
+            pdf.cell(200, 10, txt=f"Total before tax: EUR {total_before_tax:.2f}", ln=True, align="R", border= True)
             pdf.cell(200, 10, txt=f"Tax (21%): EUR {total_before_tax * TAX:.2f}", ln=True, align="R", border= True)
-            pdf.cell(200, 10, txt=f"Total after tax: Eur {total_after_tax:.2f}", ln=True, align="R", border= True)
+            pdf.cell(200, 10, txt=f"Total after tax: EUR {total_after_tax:.2f}", ln=True, align="R", border= True)
 
             pdf.output(filename)
 
