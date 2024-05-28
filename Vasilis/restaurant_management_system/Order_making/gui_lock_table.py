@@ -21,7 +21,7 @@ class LockTheTable(QDialog):
         try:
             # Lock the table in the database
             with self.db_connection.cursor() as cursor:
-                sql = "UPDATE `tables` SET `status` = 'locked' WHERE `Number` = %s"
+                sql = "UPDATE `tables` SET `rs_status` = 'locked' WHERE `rs_number` = %s"
                 cursor.execute(sql, (self.table_number,))
                 self.db_connection.commit()
                 print(f"Table {self.table_number} locked")
@@ -52,7 +52,7 @@ class UnlockTheTable(QDialog):
             try:
                 # Unlock the table in the database
                 with self.db_connection.cursor() as cursor:
-                    sql = "UPDATE `tables` SET `status` = 'available' WHERE `Number` = %s"
+                    sql = "UPDATE `tables` SET `rs_status` = 'available' WHERE `rs_number` = %s"
                     cursor.execute(sql, (self.table_number,))
                     self.db_connection.commit()
                     print(f"Table {self.table_number} unlocked")

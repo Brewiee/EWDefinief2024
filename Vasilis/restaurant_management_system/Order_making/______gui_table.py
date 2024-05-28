@@ -4,7 +4,7 @@ from PySide6.QtCore import QTimer
 import pymysql.cursors
 from gui_choice_menu import MainMenu
 
-USER = 7
+USER = 1
 
 
 def connect_to_database():
@@ -12,7 +12,7 @@ def connect_to_database():
         db_host = 'localhost'
         db_user = 'dbadmin'
         db_password = 'dbadmin'
-        db_name = 'restaurantv2'
+        db_name = 'restaurant'
         db_connection = pymysql.connect(host=db_host,
                                          user=db_user,
                                          password=db_password,
@@ -76,8 +76,8 @@ class TableSelectionWindow(QMainWindow):
 
                 # Create a button for each table record
                 for i, table in enumerate(tables):
-                    table_number = table['Number']  # Get the 'Number' from the table record
-                    status = table['Status']
+                    table_number = table['rs_number']  # Get the 'Number' from the table record
+                    status = table['rs_status']
                     # print(f"Table {table_number} with status {status}")
                     button = QPushButton(f"{table_number}")  # Set the button text using 'Number'
                     # Make the font of the button bigger and bold

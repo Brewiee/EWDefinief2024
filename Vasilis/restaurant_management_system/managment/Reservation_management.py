@@ -54,13 +54,13 @@ class UpdateReservationDialog(QDialog):
         self.table_number_combo.currentIndexChanged.connect(self.update_table_id_and_seats_label)
 
     def load_reservation_data(self, reservation_data):
-        self.reservation_id = reservation_data['reservation_id']
-        self.customer_name_edit.setText(reservation_data['name'])
-        self.reservation_date_calendar.setSelectedDate(reservation_data['reservation_date'])
-        time = reservation_data['reservation_time'].seconds // 3600, reservation_data['reservation_time'].seconds // 60 % 60
+        self.reservation_id = reservation_data['rs_reservation_id']
+        self.customer_name_edit.setText(reservation_data['rs_name'])
+        self.reservation_date_calendar.setSelectedDate(reservation_data['rs_reservation_date'])
+        time = reservation_data['rs_reservation_time'].seconds // 3600, reservation_data['rs_reservation_time'].seconds // 60 % 60
         self.populate_reservation_time_combo(f"{time[0]:02d}:{time[1]:02d}")
-        self.party_size_edit.setText(str(reservation_data['party_size']))
-        self.populate_table_number_combo(reservation_data['TableID'])
+        self.party_size_edit.setText(str(reservation_data['rs_party_size']))
+        self.populate_table_number_combo(reservation_data['rs_table_id'])
 
     def populate_reservation_time_combo(self, selected_time):
         self.reservation_time_combo.clear()
@@ -73,14 +73,13 @@ class UpdateReservationDialog(QDialog):
         self.table_number_combo.clear()
         try:
             with self.db_connection.cursor() as cursor:
-                cursor.execute("SELECT TableID, Number, Status FROM tables")
+                cursor.execute("SELECT rs_table_id, rs_number, rs_status FROM tables")
                 for table in cursor:
-                    table_id, number, status  = table['TableID'], table['Number'], table['Status']
+                    table_id, number, status = table['rs_table_id'], table['rs_number'], table['rs_status']
                     self.table_number_combo.addItem(f"Table {number} -- {status}", table_id)
         except Exception as e:
             QMessageBox.warning(self, "Database Error", f"An error occurred while loading tables: {e}")
         self.table_number_combo.setCurrentIndex(self.table_number_combo.findData(selected_table_id))
-
 
     def confirm_update_reservation(self):
         confirm_dialog = QMessageBox()
@@ -88,7 +87,6 @@ class UpdateReservationDialog(QDialog):
         confirm_dialog.setText("Are you sure you want to update the reservation?")
         confirm_dialog.setWindowTitle("Confirm Update")
         confirm_dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        confirm_dialog.close()
         confirm_dialog.buttonClicked.connect(self.update_reservation_on_confirm)
         confirm_dialog.exec()
 
@@ -110,29 +108,29 @@ class UpdateReservationDialog(QDialog):
         try:
             with self.db_connection.cursor() as cursor:
                 # Check if the selected table is already reserved
-                cursor.execute("SELECT status FROM tables WHERE TableID = %s", (selected_table_id,))
-                table_status = cursor.fetchone()['status']
+                cursor.execute("SELECT rs_status FROM tables WHERE rs_table_id = %s", (selected_table_id,))
+                table_status = cursor.fetchone()['rs_status']
                 if table_status == 'reserved':
                     QMessageBox.warning(self, "Table Reserved",
                                         "This table is already reserved. Please select another table.")
                     return
 
                 # Get the previous table ID associated with the reservation
-                cursor.execute("SELECT TableID FROM reservation WHERE reservation_id = %s", (self.reservation_id,))
-                previous_table_id = cursor.fetchone()['TableID']
+                cursor.execute("SELECT rs_table_id FROM reservation WHERE rs_reservation_id = %s", (self.reservation_id,))
+                previous_table_id = cursor.fetchone()['rs_table_id']
 
                 # Update reservation with new table ID
-                cursor.execute("UPDATE reservation SET TableID = %s, reservation_date = %s, "
-                               "reservation_time = %s, party_size = %s "
-                               "WHERE reservation_id = %s",
+                cursor.execute("UPDATE reservation SET rs_table_id = %s, rs_reservation_date = %s, "
+                               "rs_reservation_time = %s, rs_party_size = %s "
+                               "WHERE rs_reservation_id = %s",
                                (selected_table_id, new_reservation_date, new_reservation_time,
                                 new_party_size, self.reservation_id))
 
                 # Update previous table status to 'available'
-                cursor.execute("UPDATE tables SET status = 'available' WHERE TableID = %s", (previous_table_id,))
+                cursor.execute("UPDATE tables SET rs_status = 'available' WHERE rs_table_id = %s", (previous_table_id,))
 
                 # Update new table status to 'reserved'
-                cursor.execute("UPDATE tables SET status = 'reserved' WHERE TableID = %s", (selected_table_id,))
+                cursor.execute("UPDATE tables SET rs_status = 'reserved' WHERE rs_table_id = %s", (selected_table_id,))
 
             self.db_connection.commit()
 
@@ -151,11 +149,11 @@ class UpdateReservationDialog(QDialog):
             if table_id is not None:
                 try:
                     with self.db_connection.cursor() as cursor:
-                        cursor.execute("SELECT Seats FROM tables WHERE TableID = %s", (table_id,))
+                        cursor.execute("SELECT rs_seats FROM tables WHERE rs_table_id = %s", (table_id,))
                         result = cursor.fetchone()
                         if result:
                             self.table_ID_label.setText(f"Table ID: {table_id}")
-                            self.table_seats_label.setText(f"Table Seats: {result['Seats']}")
+                            self.table_seats_label.setText(f"Table Seats: {result['rs_seats']}")
                         else:
                             self.table_ID_label.clear()
                             self.table_seats_label.clear()
@@ -181,7 +179,7 @@ class ReservationManagement(QWidget):
         self.add_reservation_window = None
 
     def create_db_connection(self):
-        return connect(host='localhost', user='dbadmin', password='dbadmin', database='restaurantV2',
+        return connect(host='localhost', user='dbadmin', password='dbadmin', database='restaurant',
                        cursorclass=cursors.DictCursor)
 
     def initUI(self):
@@ -203,23 +201,21 @@ class ReservationManagement(QWidget):
         self.refresh_timer.timeout.connect(self.load_reservations)
         self.refresh_timer.start(1000)
 
-    from datetime import datetime
-
     def load_reservations(self):
         self.table.setRowCount(0)
         today_date = datetime.now().date()
         try:
             with self.db_connection.cursor() as cursor:
                 cursor.execute(
-                    "SELECT reservation_id, customer.name, reservation_date, reservation_time, party_size, TableID FROM reservation "
-                    "JOIN customer ON reservation.customer_id = customer.customer_id "
-                    "WHERE reservation_date = %s AND reservation.status = 'pending'", (today_date,))
+                    "SELECT rs_reservation_id, customer.rs_name, rs_reservation_date, rs_reservation_time, rs_party_size, rs_table_id FROM reservation "
+                    "JOIN customer ON reservation.rs_customer_id = customer.rs_customer_id "
+                    "WHERE rs_reservation_date = %s", (today_date,))
                 for row_number, row_data in enumerate(cursor):
                     self.table.insertRow(row_number)
                     for column_number, data in enumerate(row_data.values()):
                         self.table.setItem(row_number, column_number, QTableWidgetItem(str(data)))
                     self.table.setCellWidget(row_number, 6, self.create_update_button(row_data))
-                    self.table.setCellWidget(row_number, 7, self.create_delete_button(row_data['reservation_id']))
+                    self.table.setCellWidget(row_number, 7, self.create_delete_button(row_data['rs_reservation_id']))
         except Exception as e:
             QMessageBox.warning(self, "Database Error", f"An error occurred: {e}")
 
@@ -246,7 +242,7 @@ class ReservationManagement(QWidget):
         if button.text() == "&Yes":
             try:
                 with self.db_connection.cursor() as cursor:
-                    cursor.execute("DELETE FROM reservation WHERE reservation_id = %s", (reservation_id,))
+                    cursor.execute("DELETE FROM reservation WHERE rs_reservation_id = %s", (reservation_id,))
                     self.db_connection.commit()
                     QMessageBox.information(self, "Success", "Reservation deleted successfully.")
                     self.load_reservations()
