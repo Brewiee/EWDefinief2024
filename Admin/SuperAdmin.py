@@ -281,9 +281,10 @@ class ManagementDashboard(QWidget):
         boxes_layout.addWidget(restore_box)
 
         # Create "Drop" box
-        drop_box = self.create_button_box("Drop", [
+        drop_box = self.create_button_box("Admin functions", [
             {"text": "Drop Tables", "icon": "drop.png", "function": self.drop_tables},
             {"text": "Panic button", "icon": "panic.png", "function": self.panic},
+            {"text": "DBManager button", "icon": "DBManager.png", "function": self.dbmanager},
         ])
         boxes_layout.addWidget(drop_box)
 
@@ -591,6 +592,12 @@ class ManagementDashboard(QWidget):
             subprocess.Popen(["python", r"Frogger.py"])
         except FileNotFoundError:
             print("Unable to find Frogger.")
+
+    def dbmanager(self):
+        try:
+            subprocess.Popen(["python", r"DBManager.py"])
+        except FileNotFoundError:
+            print("Unable to find DBManager.py.")
 
 if __name__ == "__main__":
     app = QApplication([])
