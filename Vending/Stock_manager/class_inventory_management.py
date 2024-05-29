@@ -1,60 +1,15 @@
 from Vending.Database_connector.class_database_connector import database_connector
+from Vending.Log_creator.class_custom_logger import CustomLogger
 import pymysql
 
 class stock_manager:
     def __init__(self):
         db_connector = database_connector()
         self.connection = db_connector.database_connection()
-        print("inventory manager")
-
-    def run_stock_manager(self):
-        while True:
-            print("\nStock Manager:")
-            print("1. Choose vending machine")
-            print("2. read inventory")
-            print("3. update stock quantity")
-            print("4. set refill stock")
-            print("5. set maximum stock")
-            print("6. set minimum stock")
-            print("7. set stock to refill")
-            print("8. set stock to max")
-            print("9. show stock to refill")
-            print("10. show stock to max")
-            print("11. back to main menu")
-            choice = input("Enter your choice: ")
-
-            if choice == "1":
-                self.choose_vending_machine()
-            elif choice == "2":
-                self.read_inventory()
-            elif choice == "3":
-                product_id = int(input("Which id do you want to set stock quantity? "))
-                new_stock_quantity = int(input("What is the new stock quantity? "))
-                self.update_stock_quantity(product_id, new_stock_quantity)
-            elif choice == "4":
-                product_id = int(input("Which id do you want to set refill stock quantity? "))
-                new_refill_stock_quantity = int(input("What is the new refill stock quantity? "))
-                self.set_refill_stock(product_id, new_refill_stock_quantity)
-            elif choice == "5":
-                product_id = int(input("Which id do you want to set stock quantity? "))
-                new_max_stock_quantity = int(input("What is the new maximum stock quantity? "))
-                self.set_max_stock(product_id, new_max_stock_quantity)
-            elif choice == "6":
-                product_id = int(input("Which id do you want to set stock quantity? "))
-                new_min_stock_quantity = int(input("What is the new minimum stock quantity? "))
-                self.set_min_stock(product_id, new_min_stock_quantity)
-            elif choice == "7":
-                self.set_stock_to_refill()
-            elif choice == "8":
-                self.set_stock_to_max()
-            elif choice == "9":
-                self.show_stock_to_refill()
-            elif choice == "10":
-                self.show_stock_to_max()
-            elif choice == "11":
-                break
-            else:
-                print("Invalid choice. Please try again.")
+        self.logger = CustomLogger("Vending", "Logging")
+        self.logger.log_debug("Start Stock Manager Debug Log")
+        self.logger.log_info("Start Stock Manager Info Log")
+        self.logger.log_error("Start Stock Manager Error Log")
 
     def choose_vending_machine(self):
         try:
@@ -75,11 +30,10 @@ class stock_manager:
                         vending_machine_data.append((inventory_id, vending_location))  # Use [] to append as a tuple
                 return vending_machine_data
         except pymysql.MySQLError as e:
-            print(f"Error reading vending machines: {e}")
+            self.logger.log_error(f"Error reading vending machines: {e}")
             return None
 
     def read_inventory(self, vending_machine_id=None):
-        print(f"the id is {vending_machine_id}")
         try:
             with self.connection.cursor() as cursor:
                 if vending_machine_id is None:
@@ -123,7 +77,7 @@ class stock_manager:
                             inventory_max_stock, inventory_min_stock))
                 return inventory_data
         except pymysql.MySQLError as e:
-            print(f"Error reading products: {e}")
+            self.logger.log_error(f"Error reading products: {e}")
             return None
 
     def update_stock_quantity(self, inventory_id, inventory_stock_quantity):
@@ -132,10 +86,10 @@ class stock_manager:
                 sql = "UPDATE inventory SET vd_inventory_stock_quantity=%s WHERE vd_inventory_id=%s"
                 cursor.execute(sql, (inventory_stock_quantity, inventory_id))
                 self.connection.commit()
-                print("Stock updated")
+                self.logger.log_info(f"Stock updated: id: {inventory_id}, stock quantitiy: {inventory_stock_quantity} ")
             return True
         except pymysql.MySQLError as e:
-            print(f"Error updating stock quantity: {e}")
+            self.logger.log_error(f"Error updating stock quantity: {e}")
             return False
 
     def set_refill_stock(self, inventory_product_id, inventory_refill_stock):
@@ -144,10 +98,10 @@ class stock_manager:
                 sql = "UPDATE inventory SET vd_inventory_refill_stock=%s WHERE vd_inventory_product_id=%s"
                 cursor.execute(sql, (inventory_refill_stock, inventory_product_id))
                 self.connection.commit()
-                print("Refill stock updated")
+                self.logger.log_info(f"Refill stock updated: id: {inventory_product_id}, refill stock: {inventory_refill_stock}")
             return True
         except pymysql.MySQLError as e:
-            print(f"Error updating refill stock: {e}")
+            self.logger.log_error(f"Error updating refill stock: {e}")
             return False
 
     def set_max_stock(self, inventory_product_id, inventory_max_stock):
@@ -156,10 +110,10 @@ class stock_manager:
                 sql = "UPDATE inventory SET vd_inventory_max_stock=%s WHERE vd_inventory_product_id=%s"
                 cursor.execute(sql, (inventory_max_stock, inventory_product_id))
                 self.connection.commit()
-                print("Max stock updated")
+                self.logger.log_info(f"Max stock updated: id: {inventory_product_id}, max stock: {inventory_max_stock}")
             return True
         except pymysql.MySQLError as e:
-            print(f"Error updating max stock: {e}")
+            self.logger.log_error(f"Error updating max stock: {e}")
             return False
 
     def set_min_stock(self, inventory_product_id, inventory_min_stock):
@@ -168,36 +122,34 @@ class stock_manager:
                 sql = "UPDATE inventory SET vd_inventory_min_stock=%s WHERE vd_inventory_product_id=%s"
                 cursor.execute(sql, (inventory_min_stock, inventory_product_id))
                 self.connection.commit()
-                print("Min stock updated")
+                self.logger.log_info(f"Min stock updated: id {inventory_product_id}, min stock: {inventory_min_stock}")
             return True
         except pymysql.MySQLError as e:
-            print(f"Error updating min stock: {e}")
+            self.logger.log_error(f"Error updating min stock: {e}")
             return False
 
     def set_stock_to_refill(self, vending_machine_id):
-        print(f"this id is {vending_machine_id}")
         try:
             with self.connection.cursor() as cursor:
                 sql = "UPDATE inventory SET vd_inventory_stock_quantity = vd_inventory_refill_stock WHERE vd_inventory_vending_machine_id = %s"
                 cursor.execute(sql, (vending_machine_id,))
                 self.connection.commit()
-                print("Stock set to refill values")
+                self.logger.log_info(f"Stock set to refill values: id: {vending_machine_id}")
             return True
         except pymysql.MySQLError as e:
-            print(f"Error setting stock to refill: {e}")
+            self.logger.log_error(f"Error setting stock to refill: {e}")
             return False  # Return False in case of an error
 
     def set_stock_to_max(self, vending_machine_id):
-        print(vending_machine_id)
         try:
             with self.connection.cursor() as cursor:
                 sql = "UPDATE inventory SET vd_inventory_stock_quantity = vd_inventory_max_stock WHERE vd_inventory_vending_machine_id = %s"
                 cursor.execute(sql, (vending_machine_id,))
                 self.connection.commit()
-                print("Stock set to max values")
+                self.logger.log_info(f"Stock set to max values: id: {vending_machine_id}")
             return True
         except pymysql.MySQLError as e:
-            print(f"Error setting stock to max: {e}")
+            self.logger.log_error(f"Error setting stock to max: {e}")
             return False  # Return False in case of an error
 
     def show_stock_to_refill(self, vending_machine_id):
@@ -229,7 +181,7 @@ class stock_manager:
                             (inventory_product_id, product_name, current_stock, to_refill_stock, refill_stock))
                 return inventory_refill_data
         except pymysql.MySQLError as e:
-            print(f"Error connecting: {e}")
+            self.logger.log_error(f"Error connecting: {e}")
 
     def show_stock_to_max(self, vending_machine_id):
         try:
@@ -260,7 +212,7 @@ class stock_manager:
                             (inventory_product_id, product_name, current_stock, to_refill_stock, max_stock))
                 return inventory_refill_data
         except pymysql.MySQLError as e:
-            print(f"Error connecting: {e}")
+            self.logger.log_error(f"Error connecting: {e}")
 
     def update_inventory(self, inventory_id, edited_data):
         try:
@@ -278,12 +230,6 @@ class stock_manager:
                 cursor.execute(sql, (*edited_data, inventory_id))
                 # Commit the transaction if necessary
                 self.connection.commit()
+                self.logger.log_info(f"inventory edited: id: {inventory_id}, data: {edited_data}")
         except pymysql.MySQLError as e:
-            print(f"Error updating inventory: {e}")
-
-def main():
-    ui = stock_manager()
-    ui.run_stock_manager()
-
-if __name__ == "__main__":
-    main()
+            self.logger.log_error(f"Error updating inventory: {e}")

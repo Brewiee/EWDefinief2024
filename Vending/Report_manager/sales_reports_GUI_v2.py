@@ -15,7 +15,7 @@ class report_manager(QMainWindow):
         super().__init__()
         self.setWindowTitle("Sales Report Manager")
         self.setGeometry(100, 100, 800, 600)
-        self.logger = CustomLogger("Sales_Report_GUI", "Logging")
+        self.logger = CustomLogger("Vending", "Logging")
         self.logger.log_info("Sales Report GUI Info Log")
 
         self.sales_report_manager = sales_report_manager()
@@ -233,7 +233,7 @@ class report_manager(QMainWindow):
             sales_table.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
             # Adjust the size of the table
-            sales_table.setMinimumSize(600, 460)  # Adjust these values according to your preference
+            sales_table.setMinimumSize(600, 460)
 
             # Add the table to the existing layout
             self.table_layout.addWidget(sales_table)
@@ -530,7 +530,6 @@ class report_manager(QMainWindow):
             self.sales_graph_widget.setLayout(graph_layout)
         # Add the widget to the main layout
         self.layout.addWidget(self.sales_graph_widget)
-        print("Sales Graph Widget Layout:", self.sales_graph_widget.layout())
 
     def hide_sales_graph_widget(self):
         # Hide the SalesGraphWidget if it exists
@@ -539,7 +538,6 @@ class report_manager(QMainWindow):
 
     def clear_layout(self, layout):
         if layout is not None:
-            print("Clearing layout:", layout)
             while layout.count():
                 item = layout.takeAt(0)
                 widget = item.widget()

@@ -10,6 +10,14 @@ Used Packages:
 * tkinter
 * datetime
 * pymysql
+* os
+* datetime
+* sys
+* PySide6.QtWidgets
+* PySide6.QtGui
+* PySide6.QtCore
+* reportlab
+* matplotlib
 
 ---
 

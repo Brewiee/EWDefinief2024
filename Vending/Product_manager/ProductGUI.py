@@ -21,7 +21,7 @@ class ProductGUI(QMainWindow):
         self.setGeometry(100, 100, 1920, 1080)
 
         self.product_interface = product_interface()
-        self.logger = CustomLogger("Product_GUI", "Logging")
+        self.logger = CustomLogger("Vending", "Logging")
         self.logger.log_error("Start Product GUI Error Log")
 
         # Define input layout attribute
@@ -302,15 +302,10 @@ class ProductGUI(QMainWindow):
 
     def save_updated_product(self, product_id):
         """Save updated product information."""
-        print(product_id)
         new_product_code = self.code_entry.text()  # Assign product code input to new_product_code
-        print(new_product_code)
         new_name = self.name_entry.text()  # Assign product name input to new_name
-        print(new_name)
         new_price = float(self.price_entry.text())
-        print(new_price)
         new_tax = float(self.tax_entry.text())
-        print(new_tax)
         try:
             # Update the product with new name, price, and tax
             self.product_interface.update_product(product_id, new_product_code, new_name, new_price, new_tax)

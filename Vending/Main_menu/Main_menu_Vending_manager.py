@@ -28,7 +28,7 @@ class LoveWindow(QWidget):
 class MainLayout(QWidget):
     def __init__(self):
         super().__init__()
-        self.logger = CustomLogger("Main_Menu", "Logging")
+        self.logger = CustomLogger("Vending", "Logging")
         self.logger.log_debug("Start Main Menu Debug Log")
         self.initUI()
 
@@ -105,7 +105,7 @@ class MainLayout(QWidget):
 class Dashboard(QWidget):
     def __init__(self, parent):
         super().__init__(parent)
-        self.logger = CustomLogger("Dashboard", "Logging")
+        self.logger = CustomLogger("Vending", "Logging")
         self.logger.log_debug("Start Dashboard Debug Log")
         self.initUI()
 
@@ -123,14 +123,11 @@ class Dashboard(QWidget):
         icons_dir = "../Icons/"
         button_labels = ["Products", "Vending Machines", "Stock Management", "Reports"]
 
-        num_buttons = len(button_labels)
-        num_columns = 3 if num_buttons >= 9 else 2 if num_buttons >= 6 else 1
-        num_rows = (num_buttons + num_columns - 1) // num_columns
+        # Ensure the buttons are displayed in a 2x2 grid
+        positions = [(i, j) for i in range(2) for j in range(2)]
 
-        for i, label in enumerate(button_labels):
+        for position, label in zip(positions, button_labels):
             icon_filename = f"{label.lower().replace(' ', '_')}.png"
-            row = i // num_columns
-            col = i % num_columns
 
             button = QPushButton()
             pixmap = QPixmap(icons_dir + icon_filename)
@@ -138,14 +135,18 @@ class Dashboard(QWidget):
             button.setIcon(icon)
             button.setIconSize(pixmap.rect().size())
             button.setFixedSize(200, 200)
-            layout.addWidget(button, row * 2, col, 1, 1, Qt.AlignCenter)
+
+            # Add the button to the layout
+            layout.addWidget(button, position[0] * 2, position[1], Qt.AlignCenter)
 
             method_name = f"open_{label.lower().replace(' ', '_')}"
             button.clicked.connect(getattr(self, method_name))
 
             label_widget = QLabel(label)
             label_widget.setAlignment(Qt.AlignCenter)
-            layout.addWidget(label_widget, row * 2 + 1, col, 1, 1, Qt.AlignCenter)
+
+            # Add the label directly below the button
+            layout.addWidget(label_widget, position[0] * 2 + 1, position[1], Qt.AlignCenter)
 
             self.logger.log_debug(f"{label} manager activated")
 
