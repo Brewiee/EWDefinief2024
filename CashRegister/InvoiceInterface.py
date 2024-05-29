@@ -12,6 +12,7 @@ import os
 import sys
 
 # Variables
+ICON_FOLDER = "../Icons/"
 windows_base_dir = "C:/Users/M.Akif Haleplioglu/PycharmProjects/Eindwerk_voorbereiding"
 fedora_base_dir = ""
 dbuser = "dbadmin"
@@ -87,14 +88,14 @@ class InvoiceManagementApp(QMainWindow):
 
         # Modify the icon filenames to use platform-independent paths
         icon_filenames = [
-            os.path.join(base_dir, "Icons", "name.png"),
-            os.path.join(base_dir, "Icons", "email.png"),
-            os.path.join(base_dir, "Icons", "country.png"),
-            os.path.join(base_dir, "Icons", "address.png"),
-            os.path.join(base_dir, "Icons", "postal_code.png"),
-            os.path.join(base_dir, "Icons", "city.png"),
-            os.path.join(base_dir, "Icons", "phone.png"),
-            os.path.join(base_dir, "Icons", "vat.png")
+            os.path.join(ICON_FOLDER, "name.png"),
+            os.path.join(ICON_FOLDER, "email.png"),
+            os.path.join(ICON_FOLDER, "country.png"),
+            os.path.join(ICON_FOLDER, "address.png"),
+            os.path.join(ICON_FOLDER, "postal_code.png"),
+            os.path.join(ICON_FOLDER, "city.png"),
+            os.path.join(ICON_FOLDER, "phone.png"),
+            os.path.join(ICON_FOLDER, "vat.png")
         ]
 
         field_labels = [

@@ -15,14 +15,14 @@ class OrderManagement(QWidget):
         self.load_orders()
 
     def create_db_connection(self):
-        return connect(host='localhost', user='dbadmin', password='dbadmin', database='restaurantV2',
+        return connect(host='localhost', user='dbadmin', password='dbadmin', database='restaurant',
                        cursorclass=cursors.DictCursor)
 
     def initUI(self):
         self.layout = QVBoxLayout()
         self.table = QTableWidget()
         self.table.setColumnCount(6)
-        self.table.setHorizontalHeaderLabels(["OrderID", "Username", "TableNumber", "Status", "Update", "Delete"])
+        self.table.setHorizontalHeaderLabels(["OrderID", "UserID", "TableNumber", "Status", "Update", "Delete"])
         self.layout.addWidget(self.table)
         self.setLayout(self.layout)
 
@@ -30,13 +30,13 @@ class OrderManagement(QWidget):
         self.table.setRowCount(0)
         try:
             with self.db_connection.cursor() as cursor:
-                cursor.execute("SELECT OrderID, UserID, TableNumber, Status FROM Orders")
+                cursor.execute("SELECT rs_order_id, rs_user_id, rs_table_number, rs_status FROM orders")
                 for row_number, row_data in enumerate(cursor):
                     self.table.insertRow(row_number)
                     for column_number, data in enumerate(row_data.values()):
                         self.table.setItem(row_number, column_number, QTableWidgetItem(str(data)))
-                    self.table.setCellWidget(row_number, 4, self.create_update_button(row_data['OrderID']))
-                    self.table.setCellWidget(row_number, 5, self.create_delete_button(row_data['OrderID']))
+                    self.table.setCellWidget(row_number, 4, self.create_update_button(row_data['rs_order_id']))
+                    self.table.setCellWidget(row_number, 5, self.create_delete_button(row_data['rs_order_id']))
         except Exception as e:
             QMessageBox.warning(self, "Database Error", f"An error occurred: {e}")
 
@@ -57,8 +57,8 @@ class OrderManagement(QWidget):
         if confirmation == QMessageBox.Yes:
             try:
                 with self.db_connection.cursor() as cursor:
-                    cursor.execute("DELETE FROM orderdetails WHERE OrderID = %s", (orderID,))
-                    cursor.execute("DELETE FROM orders WHERE OrderID = %s", (orderID,))
+                    cursor.execute("DELETE FROM orderdetails WHERE rs_order_id = %s", (orderID,))
+                    cursor.execute("DELETE FROM orders WHERE rs_order_id = %s", (orderID,))
                     self.db_connection.commit()
                     QMessageBox.information(self, "Success", "Order and order details deleted successfully.")
                     self.load_orders()
@@ -69,7 +69,7 @@ class OrderManagement(QWidget):
 
     def open_update_order_dialog(self, orderID):
         dialog = UpdateOrderDialog(orderID, self.db_connection, self)
-        dialog.exec_()
+        dialog.exec()
         self.load_orders()
 
 
@@ -104,11 +104,11 @@ class UpdateOrderDialog(QDialog):
     def load_order_data(self):
         try:
             with self.db_connection.cursor() as cursor:
-                cursor.execute("SELECT TableNumber, Status FROM Orders WHERE OrderID = %s", (self.orderID,))
+                cursor.execute("SELECT rs_table_number, rs_status FROM orders WHERE rs_order_id = %s", (self.orderID,))
                 order = cursor.fetchone()
                 if order:
-                    self.table_number_input.setText(str(order['TableNumber']))
-                    self.status_input.setCurrentText(order['Status'])
+                    self.table_number_input.setText(str(order['rs_table_number']))
+                    self.status_input.setCurrentText(order['rs_status'])
         except Exception as e:
             QMessageBox.warning(self, "Error", f"Failed to load order data: {e}")
 
@@ -127,7 +127,7 @@ class UpdateOrderDialog(QDialog):
             try:
                 with self.db_connection.cursor() as cursor:
                     orderTime = QDateTime.currentDateTime().toString("yyyy-MM-dd HH:mm:ss")
-                    cursor.execute("UPDATE Orders SET TableNumber=%s, OrderTime=%s, Status=%s WHERE OrderID=%s",
+                    cursor.execute("UPDATE orders SET rs_table_number=%s, rs_order_time=%s, rs_status=%s WHERE rs_order_id=%s",
                                    (tableNumber, orderTime, status, self.orderID))
                     self.db_connection.commit()
                     QMessageBox.information(self, "Success", "Order updated successfully.")

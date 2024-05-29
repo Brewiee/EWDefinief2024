@@ -14,7 +14,7 @@ class TableManagementWidget(QWidget):
         self.load_tables()
 
     def create_db_connection(self):
-        return connect(host='localhost', user='dbadmin', password='dbadmin', database='restaurantV2',
+        return connect(host='localhost', user='dbadmin', password='dbadmin', database='restaurant',
                        cursorclass=cursors.DictCursor)
 
     def initUI(self):
@@ -31,7 +31,7 @@ class TableManagementWidget(QWidget):
         self.number_input = QLineEdit()
         self.seats_input = QLineEdit()
         self.status_input = QComboBox()
-        self.status_input.addItems([None, "available", "occupied", "reserved", "locked"])
+        self.status_input.addItems(["available", "occupied", "reserved", "locked"])
 
         self.add_table_button = QPushButton("Add Table")
         self.add_table_button.clicked.connect(self.add_table)
@@ -57,8 +57,8 @@ class TableManagementWidget(QWidget):
                     self.table_widget.insertRow(row_number)
                     for column_number, data in enumerate(row_data.values()):
                         self.table_widget.setItem(row_number, column_number, QTableWidgetItem(str(data)))
-                    self.table_widget.setCellWidget(row_number, 4, self.create_update_button(row_data['TableID']))
-                    self.table_widget.setCellWidget(row_number, 5, self.create_delete_button(row_data['TableID']))
+                    self.table_widget.setCellWidget(row_number, 4, self.create_update_button(row_data['rs_table_id']))
+                    self.table_widget.setCellWidget(row_number, 5, self.create_delete_button(row_data['rs_table_id']))
 
         except Exception as e:
             QMessageBox.warning(self, "Database Error", f"An error occurred: {e}")
@@ -88,13 +88,18 @@ class TableManagementWidget(QWidget):
         if confirmation == QMessageBox.Yes:
             try:
                 with self.db_connection.cursor() as cursor:
-                    cursor.execute("INSERT INTO tables (Number, Seats, Status) VALUES (%s, %s, %s)",
-                                   (number, seats, status))
+                    cursor.execute("SELECT MAX(rs_table_id) AS max_id FROM tables")
+                    max_id = cursor.fetchone()['max_id']
+                    new_table_id = 1 if max_id is None else max_id + 1
+
+                    cursor.execute(
+                        "INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES (%s, %s, %s, %s)",
+                        (new_table_id, number, seats, status))
                     self.db_connection.commit()
                     QMessageBox.information(self, "Success", "Table added successfully.")
                     self.number_input.clear()
                     self.seats_input.clear()
-                    self.status_input.clear()
+                    self.status_input.setCurrentIndex(0)
                     self.load_tables()
             except Exception as e:
                 QMessageBox.warning(self, "Database Error", f"An error occurred: {e}")
@@ -108,7 +113,7 @@ class TableManagementWidget(QWidget):
         if confirmation == QMessageBox.Yes:
             try:
                 with self.db_connection.cursor() as cursor:
-                    cursor.execute("DELETE FROM tables WHERE TableID = %s", (tableID,))
+                    cursor.execute("DELETE FROM tables WHERE rs_table_id = %s", (tableID,))
                     self.db_connection.commit()
                     QMessageBox.information(self, "Success", "Table deleted successfully.")
                     self.load_tables()
@@ -155,13 +160,13 @@ class EditTableDialog(QDialog):
     def load_table_data(self):
         try:
             with self.db_connection.cursor() as cursor:
-                cursor.execute("SELECT Number, Seats, Status FROM tables WHERE TableID = %s", (self.tableID,))
+                cursor.execute("SELECT rs_number, rs_seats, rs_status FROM tables WHERE rs_table_id = %s", (self.tableID,))
                 table = cursor.fetchone()
                 if table:
-                    self.number_input.setText(str(table['Number']))
-                    self.seats_input.setText(str(table['Seats']))
+                    self.number_input.setText(str(table['rs_number']))
+                    self.seats_input.setText(str(table['rs_seats']))
                     # Set the current index of the combobox based on the status value
-                    index = self.status_input.findText(table['Status'])
+                    index = self.status_input.findText(table['rs_status'])
                     if index >= 0:
                         self.status_input.setCurrentIndex(index)
         except Exception as e:
@@ -182,7 +187,7 @@ class EditTableDialog(QDialog):
         if confirmation == QMessageBox.Yes:
             try:
                 with self.db_connection.cursor() as cursor:
-                    cursor.execute("UPDATE tables SET Number=%s, Seats=%s, Status=%s WHERE TableID=%s",
+                    cursor.execute("UPDATE tables SET rs_number=%s, rs_seats=%s, rs_status=%s WHERE rs_table_id=%s",
                                    (number, seats, status, self.tableID))
                     self.db_connection.commit()
                     QMessageBox.information(self, "Success", "Table updated successfully.")

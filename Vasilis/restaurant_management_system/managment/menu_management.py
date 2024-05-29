@@ -3,6 +3,7 @@ from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout, 
                                QTableWidget, QTableWidgetItem, QMessageBox, QDialog, QFormLayout, QTextEdit, QComboBox)
 from PySide6.QtCore import QTimer
 from pymysql import connect, cursors
+from decimal import Decimal
 
 ITEMS = ["Our Famous", "Greek Burgers", "Loaded Fries", "For the Team", "Kids menu", "Starter Bites", "Siders", "Drinks", "Traditionals"]
 
@@ -16,7 +17,7 @@ class MenuManagement(QWidget):
         self.load_menu_items()
 
     def create_db_connection(self):
-        return connect(host='localhost', user='dbadmin', password='dbadmin', database='restaurantV2',
+        return connect(host='localhost', user='dbadmin', password='dbadmin', database='restaurant',
                        cursorclass=cursors.DictCursor)
 
     def initUI(self):
@@ -56,18 +57,21 @@ class MenuManagement(QWidget):
         self.table.setRowCount(0)
         try:
             with self.db_connection.cursor() as cursor:
-                cursor.execute("SELECT * FROM MenuItems")
-                for row_number, row_data in enumerate(cursor):
+                cursor.execute("SELECT * FROM menu_items")
+                rows = cursor.fetchall()
+                for row_number, row_data in enumerate(rows):
                     self.table.insertRow(row_number)
-                    for column_number, data in enumerate(row_data.values()):
-                        if column_number == 2:  # Description field
-                            item = QTableWidgetItem(str(data))
-                            item.setToolTip(str(data))  # Show full description as tooltip
+                    for column_number, key in enumerate(['rs_item_id', 'rs_name', 'rs_description', 'rs_price', 'rs_category']):
+                        if key == 'rs_description':  # Description field
+                            item = QTableWidgetItem(str(row_data[key]))
+                            item.setToolTip(str(row_data[key]))  # Show full description as tooltip
                             self.table.setItem(row_number, column_number, item)
+                        elif key == 'rs_price':  # Price field should be formatted as string
+                            self.table.setItem(row_number, column_number, QTableWidgetItem(f"{row_data[key]:.2f}"))
                         else:
-                            self.table.setItem(row_number, column_number, QTableWidgetItem(str(data)))
-                    self.table.setCellWidget(row_number, 5, self.create_update_button(row_data['ItemID']))
-                    self.table.setCellWidget(row_number, 6, self.create_delete_button(row_data['ItemID']))
+                            self.table.setItem(row_number, column_number, QTableWidgetItem(str(row_data[key])))
+                    self.table.setCellWidget(row_number, 5, self.create_update_button(row_data['rs_item_id']))
+                    self.table.setCellWidget(row_number, 6, self.create_delete_button(row_data['rs_item_id']))
         except Exception as e:
             QMessageBox.warning(self, "Database Error", f"An error occurred: {e}")
             print(e)
@@ -104,7 +108,7 @@ class MenuManagement(QWidget):
         if confirmation == QMessageBox.Yes:
             try:
                 with self.db_connection.cursor() as cursor:
-                    cursor.execute("INSERT INTO MenuItems (Name, Description, Price, Category) VALUES (%s, %s, %s, %s)",
+                    cursor.execute("INSERT INTO menu_items (rs_name, rs_description, rs_price, rs_category) VALUES (%s, %s, %s, %s)",
                                    (name, description, price, category))
                     self.db_connection.commit()
                     QMessageBox.information(self, "Success", "Menu item added successfully.")
@@ -117,7 +121,7 @@ class MenuManagement(QWidget):
     def delete_menu_item(self, itemID):
         try:
             with self.db_connection.cursor() as cursor:
-                cursor.execute("DELETE FROM MenuItems WHERE ItemID = %s", (int(itemID),))
+                cursor.execute("DELETE FROM menu_items WHERE rs_item_id = %s", (int(itemID),))
                 self.db_connection.commit()
                 QMessageBox.information(self, "Success", "Menu item deleted successfully.")
                 self.load_menu_items()  # Reload menu items
@@ -128,8 +132,6 @@ class MenuManagement(QWidget):
         dialog = UpdateMenuDialog(itemID, self.db_connection, self)
         if dialog.exec_():  # Check if dialog was accepted (menu item was updated)
             self.load_menu_items()  # Reload menu items
-
-
 
 class UpdateMenuDialog(QDialog):
     def __init__(self, itemID, db_connection, parent=None):
@@ -166,13 +168,13 @@ class UpdateMenuDialog(QDialog):
     def load_menu_item_data(self):
         try:
             with self.db_connection.cursor() as cursor:
-                cursor.execute("SELECT Name, Description, Price, Category FROM MenuItems WHERE ItemID = %s", (self.itemID,))
+                cursor.execute("SELECT rs_name, rs_description, rs_price, rs_category FROM menu_items WHERE rs_item_id = %s", (self.itemID,))
                 item = cursor.fetchone()
                 if item:
-                    self.name_input.setText(item['Name'])
-                    self.description_input.setText(item['Description'])
-                    self.price_input.setText(str(item['Price']))
-                    current_category_index = self.category_input.findText(item['Category'])
+                    self.name_input.setText(item['rs_name'])
+                    self.description_input.setText(item['rs_description'])
+                    self.price_input.setText(str(item['rs_price']))
+                    current_category_index = self.category_input.findText(item['rs_category'])
                     if current_category_index >= 0:
                         self.category_input.setCurrentIndex(current_category_index)
         except Exception as e:
@@ -194,16 +196,15 @@ class UpdateMenuDialog(QDialog):
         if confirmation == QMessageBox.Yes:
             try:
                 with self.db_connection.cursor() as cursor:
-                    cursor.execute("UPDATE MenuItems SET Description=%s, Price=%s, Category=%s WHERE Name=%s",
-                                   (description, price, category, name))
+                    cursor.execute("UPDATE menu_items SET rs_name=%s, rs_description=%s, rs_price=%s, rs_category=%s WHERE rs_item_id=%s",
+                                   (name, description, price, category, self.itemID))
                     self.db_connection.commit()
                     QMessageBox.information(self, "Success", "Menu item updated successfully.")
-                    self.load_menu_items()  # Reload menu items
+                    self.accept()  # Close dialog with accept status
             except Exception as e:
                 QMessageBox.warning(self, "Database Error", f"An error occurred: {e}")
         else:
             QMessageBox.information(self, "Cancelled", "Menu item update cancelled.")
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

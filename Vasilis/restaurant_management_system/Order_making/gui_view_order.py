@@ -6,14 +6,7 @@ from PySide6.QtCore import Signal
 from pymysql import connect, cursors
 
 
-db_config = {
-    'host': 'localhost',
-    'user': 'dbadmin',
-    'password': 'dbadmin',
-    'db': 'restaurantV2',
-    'charset': 'utf8mb4',
-    'cursorclass': cursors.DictCursor
-}
+
 
 class ViewOrder(QMainWindow):
     # Define a custom signal for closing
@@ -21,7 +14,7 @@ class ViewOrder(QMainWindow):
 
     def __init__(self, db_connection, table_number):
         super().__init__()
-        self.db_connection = self.connect_to_database()
+        self.db_connection = db_connection
         self.table_number = table_number
         # Assign table_number to an attribute
         self.setWindowTitle("View Order")
@@ -32,11 +25,17 @@ class ViewOrder(QMainWindow):
     def initUI(self):
         widget = QWidget()
         layout = QVBoxLayout()
+        self.setGeometry(100, 100, 1000, 600)
 
         self.order_view = QTreeView()
         self.order_model = QStandardItemModel()
         self.order_view.setModel(self.order_model)
         self.order_model.setHorizontalHeaderLabels(["Name", "Amount", "Price", "Subtotal"])
+
+        self.order_view.setColumnWidth(0, 350)  # Name column
+        self.order_view.setColumnWidth(1, 100)  # Amount column
+        self.order_view.setColumnWidth(2, 100)  # Price column
+        self.order_view.setColumnWidth(3, 100)  # Subtotal column
 
         layout.addWidget(self.order_view)
 
@@ -45,7 +44,7 @@ class ViewOrder(QMainWindow):
 
     def connect_to_database(self):
         try:
-            return connect(**db_config)
+            return connect()
         except Exception as e:
             QMessageBox.warning(self, "Database Error", f"Unable to connect to the database: {e}")
             return None
@@ -55,23 +54,23 @@ class ViewOrder(QMainWindow):
             with self.db_connection.cursor() as cursor:
                 # First, let's get the latest OrderID for the given table number where the table status is 'Occupied'
                 cursor.execute("""
-                    SELECT o.OrderID
+                    SELECT o.rs_order_id
                     FROM Orders o
-                    JOIN tables t ON o.TableNumber = t.Number
-                    WHERE t.Number = %s AND t.Status = 'Occupied'
-                    ORDER BY o.OrderTime DESC
+                    JOIN tables t ON o.rs_table_number = t.rs_number
+                    WHERE t.rs_number = %s AND t.rs_status = 'Occupied'
+                    ORDER BY o.rs_order_time DESC
                     LIMIT 1
                 """, (table_number,))
                 result = cursor.fetchone()
                 print(result)
                 if result:
-                    latest_order_id = result['OrderID']
+                    latest_order_id = result['rs_order_id']
                     # Now we get the items for that order
                     cursor.execute("""
-                        SELECT mi.Name, od.Quantity, mi.Price, (od.Quantity * mi.Price) AS Subtotal
-                        FROM OrderDetails od
-                        JOIN MenuItems mi ON od.ItemID = mi.ItemID
-                        WHERE od.OrderID = %s
+                        SELECT mi.rs_name, od.rs_quantity, mi.rs_price, (od.rs_quantity * mi.rs_price) AS Subtotal
+                        FROM orderdetails od
+                        JOIN menu_items mi ON od.rs_item_id = mi.rs_item_id
+                        WHERE od.rs_order_id = %s
                     """, (latest_order_id,))
                     data = cursor.fetchall()
                     self.order_model.removeRows(0, self.order_model.rowCount())  # Clear existing rows

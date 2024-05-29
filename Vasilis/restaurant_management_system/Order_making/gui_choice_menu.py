@@ -107,6 +107,7 @@ class MainMenu(QMainWindow):
 
 
     def close_order(self):
+        print(self.table_number)
         self.order_closing = ViewOrderToClose(connection=self.db_connection, table_number=self.table_number, status=self.status)
         # Connect the about_to_close signal to the close_menu method
         self.order_closing.about_to_close.connect(self.close_menu)

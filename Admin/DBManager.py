@@ -18,7 +18,7 @@ class DatabaseManager(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Database Manager")
-        self.showMaximized()
+        self.setGeometry(0,0,1900,1000)
 
         # Connect to the database
         self.conn = self.connect_to_database()
