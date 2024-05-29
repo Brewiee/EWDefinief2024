@@ -6,20 +6,19 @@ from Vending.Vending_machine_manager.Vending_machine_interface import vending_ma
 from Vending.Log_creator.class_custom_logger import CustomLogger
 from Vending.Database_connector.class_database_connector import database_connector
 
-
 class VendingMachineManagerGUI(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Vending Machine Manager")
         self.setGeometry(100, 100, 800, 600)
 
-        self.logger = CustomLogger("Vending_machine_manager", "Logging")
+        self.logger = CustomLogger("Vending", "Logging")
         self.vending_machine_interface = vending_machine_interface()
 
         db_connector = database_connector()
         self.connection = db_connector.database_connection()
 
-        self.logger.log_debug("Start Vending Creator")
+        self.logger.log_info("Start Vending Creator")
 
         self.create_widgets()
         self.combo_signal_connected = False
@@ -278,20 +277,10 @@ class VendingMachineManagerGUI(QMainWindow):
         self.vending_machine_combo.currentIndexChanged.disconnect(self.handle_vending_machine_change)
         self.vending_machine_combo.currentIndexChanged.connect(self.handle_vending_machine_change)
 
-        # Add a delete button to confirm deletion
-        #self.delete_button = QPushButton("Delete Selected Machine")
-        #self.delete_button.clicked.connect(self.confirm_delete)
-        #self.delete_button.setStyleSheet("text-align:left;")
-        #self.layout().addWidget(self.delete_button)
-
     def confirm_delete(self):
         selected_index = self.vending_machine_combo.currentIndex()
         selected_machine = self.vending_machine_combo.currentText()
         selected_machine_id = self.vending_machine_combo.itemData(selected_index, Qt.UserRole)
-
-        print(f"Selected index: {selected_index}")
-        print(f"Selected machine: {selected_machine}")
-        print(f"Selected machine ID: {selected_machine_id}")
 
         if selected_index > 0 and selected_machine_id:
             self.perform_delete_operation(selected_machine_id, selected_machine)
@@ -308,15 +297,15 @@ class VendingMachineManagerGUI(QMainWindow):
                 # Call the delete_vending_machine method from the vending machine interface
                 success = self.vending_machine_interface.delete_vending_machine(selected_machine_id)
                 if success:
-                    self.logger.log_info("Vending machine deleted successfully!")
+                    self.logger.log_info(f"Vending machine id: {selected_machine_id} deleted successfully!")
                     # Refresh vending machine menu
                     self.populate_vending_machine_menu()
                     # Clear the input fields
                     self.clear_input_fields()
                 else:
-                    self.logger.log_error("Failed to delete vending machine!")
+                    self.logger.log_info(f"Failed to delete vending machine id {selected_machine_id}!")
         else:
-            print("No vending machine selected")
+            self.logger.log_error("No vending machine selected")
 
     def set_up_machine(self):
         """Set up products in the vending machine."""
@@ -346,12 +335,9 @@ class VendingMachineManagerGUI(QMainWindow):
         selected_product = self.product_combo.currentText()
         selected_product_id = self.product_combo.itemData(selected_product_index, Qt.UserRole)
 
-        print(f"Selected index: {selected_index}")
-        print(f"Selected machine: {selected_machine}")
-        print(f"Selected machine ID: {selected_machine_id}")
-        print(f"Selected product index: {selected_product_index}")
-        print(f"Selected product: {selected_product}")
-        print(f"Selected product ID: {selected_product_id}")
+        self.logger.log_info(f"Selected index: {selected_index}, Selected machine: {selected_machine},"
+                             f"Selected machine ID: {selected_machine_id}, Selected product index: {selected_product_index}"
+                             f"Selected product: {selected_product}, Selected product ID: {selected_product_id} ")
 
         if selected_machine_id is None:
             QMessageBox.warning(self, "Error", "Please select a vending machine.")
@@ -368,7 +354,6 @@ class VendingMachineManagerGUI(QMainWindow):
         else:
             QMessageBox.warning(self, "Error", "Failed to add product to vending machine inventory!")
 
-
 def main():
     """Main entry point for the application."""
     app = QApplication(sys.argv)
@@ -376,7 +361,6 @@ def main():
     window = VendingMachineManagerGUI()
     window.show()
     sys.exit(app.exec())
-
 
 if __name__ == "__main__":
     main()

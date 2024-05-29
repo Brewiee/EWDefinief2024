@@ -1,5 +1,6 @@
 import sys
 from Vending.Stock_manager.class_inventory_management import stock_manager
+from Vending.Log_creator.class_custom_logger import CustomLogger
 from Vending.PDF_creator.class_create_PDF import create_pdf
 from PySide6.QtWidgets import QWidget, QMainWindow, QApplication, QVBoxLayout, QHBoxLayout, QPushButton, QTreeWidgetItem, \
     QMessageBox, QTreeWidget, QHeaderView, QLabel, QLineEdit, QDialog, QGridLayout, QComboBox, QSizePolicy
@@ -11,6 +12,8 @@ class inventory_manager(QMainWindow):
         super().__init__()
         self.setWindowTitle("Inventory Manager")
         self.setGeometry(100, 100, 800, 600)
+        self.logger = CustomLogger("Vending", "Logging")
+        self.logger.log_info("Start inventory GUI Info Log")
 
         self.stock_manager = stock_manager()
 
@@ -120,8 +123,6 @@ class inventory_manager(QMainWindow):
             selected_index = self.vending_machine_combo.currentIndex()
             selected_machine_id = self.vending_machine_combo.itemData(selected_index)
 
-            print("Selected machine ID:", selected_machine_id)
-
             # Retrieve inventory data specific to the selected vending machine
             inventory_data = self.stock_manager.read_inventory(selected_machine_id)
 
@@ -200,7 +201,6 @@ class inventory_manager(QMainWindow):
             for machine_id, location in vending_machine_data:
                 if machine_id == selected_machine_id:
                     machine_location = location
-                    print(location)
                     break
 
             if machine_location:
@@ -217,7 +217,7 @@ class inventory_manager(QMainWindow):
                     save_path = "C://Syntra//EIndwerk//EIndwerk_final//Joeri//Vending_manager//data//refill_reports"
                     pdf_generator = create_pdf(pdf_data, pdf_headers, pdf_filename, title=pdf_title, save_path=save_path)
                     pdf_generator.generate_pdf()
-                    print(f"PDF saved at: {save_path}")
+                    self.logger.log_info(f"PDF saved at: {save_path}")
 
                     QMessageBox.information(self, "PDF Generated",
                                             f"PDF report for stock to refill values generated: {pdf_filename}")
@@ -237,7 +237,6 @@ class inventory_manager(QMainWindow):
             for machine_id, location in vending_machine_data:
                 if machine_id == selected_machine_id:
                     machine_location = location
-                    print(location)
                     break
 
             if machine_location:
@@ -255,7 +254,7 @@ class inventory_manager(QMainWindow):
                     pdf_generator = create_pdf(pdf_data, pdf_headers, pdf_filename, title=pdf_title,
                                                save_path=save_path)
                     pdf_generator.generate_pdf()
-                    print(f"PDF saved at: {save_path}")
+                    self.logger.log_info(f"PDF saved at: {save_path}")
 
                     QMessageBox.information(self, "PDF Generated", f"PDF report for max stock values generated: {pdf_filename}")
                 else:
@@ -309,6 +308,11 @@ class EditDialog(QDialog):
         save_button = QPushButton("Save")
         save_button.clicked.connect(self.accept)
         layout.addWidget(save_button, len(labels) + 1, 0, 1, 2)
+
+    def accept(self):
+        # Show a message box after clicking save
+        QMessageBox.information(self, "Success", "Changes saved successfully.")
+        super().accept()  # Call the accept method of the parent QDialog to close the dialog
 
     def get_data(self):
         # Return edited data from line edits

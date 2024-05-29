@@ -4,49 +4,12 @@ import pymysql
 
 class vending_machine_interface:
     def __init__(self):
-        self.logger = CustomLogger("Vending_creator", "Logging")
+        self.logger = CustomLogger("Vending", "Logging")
         db_connector = database_connector()
         self.connection = db_connector.database_connection()
-        self.logger.log_debug("Start Vending Creator")
-
-    def run_vending_machine_interface(self):
-        while True:
-            print("\nVending Creator:")
-            print("1. Create machine")
-            print("2. Update machine")
-            print("3. Delete machine")
-            print("4. Back to Main Menu")
-            choice = input("Enter your choice: ")
-
-            if choice == "1":
-                vending_location = input("What is the location of the machine ")
-                vending_address = input("Give the address ")
-                vending_postal_code = int(input("Postal code "))
-                vending_city = input("city ")
-                vending_country = input("country ")
-                success = self.create_vending_machine(vending_location, vending_address, vending_postal_code, vending_city, vending_country)
-                if success:
-                    print("Machine created successfully")
-            elif choice == "2":
-                vending_id = int(input("vending id? "))
-                vending_location = input("What is the location of the machine ")
-                vending_address = input("Give the address ")
-                vending_postal_code = int(input("Postal code "))
-                vending_city = input("city ")
-                vending_country = input("country ")
-                success = self.update_vending_machine(vending_id, vending_location, vending_address, vending_postal_code,
-                                                      vending_city, vending_country)
-                if success:
-                    print("Machine updated successfully")
-            elif choice == "3":
-                vending_id = int(input("ID to delete? "))
-                success = self.delete_vending_machine(vending_id)
-                if success:
-                    print("Machine deleted successfully")
-            elif choice == "4":
-                break
-            else:
-                print("Invalid choice. Please try again.")
+        self.logger.log_debug("Start Vending Machine Interface Debug Log")
+        self.logger.log_info("Start Vending Machine Info Log")
+        self.logger.log_error("Start Vending Machine Error Log")
 
     def create_vending_machine(self, vending_location, vending_address, vending_postal_code, vending_city,
                                vending_country):
@@ -56,11 +19,10 @@ class vending_machine_interface:
                        "vd_vending_machine_city, vd_vending_machine_country) VALUES (%s, %s, %s, %s, %s)")
                 cursor.execute(sql, (vending_location, vending_address, vending_postal_code, vending_city, vending_country))
                 self.connection.commit()
-                self.logger.log_debug(
+                self.logger.log_info(
                     f"Machine created: (Vending location:{vending_location}), (Vending address: {vending_address}), (Vending postal code: {vending_postal_code}), (Vending city: {vending_city}), (Vending country: {vending_country}")
             return True
         except pymysql.MySQLError as e:
-            print(f"Error: {e}")
             self.logger.log_error(f"Error creating vending machine: {e}")
             return False
         finally:
@@ -96,6 +58,7 @@ class vending_machine_interface:
                 sql_delete_vending_machine = "DELETE FROM vending_machine WHERE vd_vending_machine_id=%s"
                 cursor.execute(sql_delete_vending_machine, (vending_id,))
                 self.connection.commit()
+                self.logger.log_info(f"vending id: {vending_id} deleted")
             return True
         except pymysql.MySQLError as e:
             self.logger.log_error(f"Error deleting vending machine: {e}")
@@ -136,7 +99,7 @@ class vending_machine_interface:
                         vending_machine_data.append((inventory_id, vending_location))  # Use [] to append as a tuple
                 return vending_machine_data
         except pymysql.MySQLError as e:
-            print(f"Error reading vending machines: {e}")
+            self.logger.log_error(f"Error reading vending machines: {e}")
             return None
 
     def get_vending_machine_data(self, machine_name):
@@ -147,8 +110,7 @@ class vending_machine_interface:
                 machine_data = cursor.fetchone()
                 return machine_data
         except pymysql.MySQLError as e:
-            print(f"Error: {e}")
-            # Handle the error (e.g., log it or show a message box)
+            self.logger.log_error(f"Error getting machine data: {e}")
             return None
 
     def set_up_vending_machine(self, vending_machine_id, product_id, min_stock=0, max_stock=0, refill_stock=0):
@@ -163,7 +125,7 @@ class vending_machine_interface:
                 result = cursor.fetchone()
 
                 if result:
-                    print("Product already exists in the inventory for this vending machine.")
+                    self.logger.log_debug(f"Product {product_id} already exists in the inventory for this vending machine.")
                     return False
                 else:
                     # Insert the product into the inventory table for the vending machine
@@ -173,19 +135,8 @@ class vending_machine_interface:
                         """
                     cursor.execute(sql_insert, (vending_machine_id, product_id, min_stock, max_stock, refill_stock))
                     self.connection.commit()
-                    print("Product added to inventory for the vending machine.")
+                    self.logger.log_info(f"Product {product_id} added to inventory for the vending machine.")
                     return True
         except pymysql.MySQLError as e:
-            print(f"Error setting up vending machine: {e}")
+            self.logger.log_error(f"Error setting up vending machine: {e}")
             return False
-
-
-def main():
-    # Create an instance of the user_interface class
-    ui = vending_machine_interface()
-
-    # Call methods of the user_interface instance as needed
-    ui.run_vending_machine_interface()
-
-if __name__ == "__main__":
-    main()

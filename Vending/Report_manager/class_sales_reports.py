@@ -6,66 +6,9 @@ class sales_report_manager:
     def __init__(self):
         db_connector = database_connector()
         self.connection = db_connector.database_connection()
-        self.logger = CustomLogger("Report interface", "Logging")
+        self.logger = CustomLogger("Vending", "Logging")
         self.logger.log_info("Start Report Interface Info Logging")
         self.logger.log_error("Start Report Interface Error Logging")
-
-    def run_report_manager(self):
-        while True:
-            print("\nSales Report Manager:")
-            print("1. Display overall sales report")
-            print("2. Display overall sales graph")
-            print("3. Display top 3 product")
-            print("4. Display top 3 vending machines")
-            print("5. Display sales reports of selected vending machines")
-            print("6. Display sales graph of selected vending machine")
-            print("7. Display VAT report")
-            print("8. Display payment method report")
-            #print("9. Display stock refill report")
-            print("10. Back to main menu")
-            choice = input("Enter your choice")
-
-            if choice == "1":
-                self.overall_sales_report()
-            elif choice == "2":
-                start_date = input("From what date do you want the data? (yyyy-mm-dd) ")
-                end_date = input("Till what date you want the data? (yyyy-mm-dd) ")
-                self.overall_sales_graph(start_date, end_date)
-            elif choice == "3":
-                start_date = input("From what date do you want the data? (yyyy-mm-dd) ")
-                end_date = input("Till what date you want the data? (yyyy-mm-dd) ")
-                self.top_three_products(start_date, end_date)
-            elif choice == "4":
-                start_date = input("From what date do you want the data? (yyyy-mm-dd) ")
-                end_date = input("Till what date you want the data? (yyyy-mm-dd) ")
-                self.top_three_vending_machines(start_date, end_date)
-            elif choice == "5":
-                vending_machine = input("What is the id of the vending machine for the report? ")
-                start_date = input("From what date do you want the data? (yyyy-mm-dd) ")
-                end_date = input("Till what date you want the data? (yyyy-mm-dd) ")
-                self.sales_report(vending_machine, start_date, end_date)
-            elif choice == "6":
-                vending_machine = input("What is the id of the vending machine for the report? ")
-                start_date = input("From what date do you want the data? (yyyy-mm-dd) ")
-                end_date = input("Till what date you want the data? (yyyy-mm-dd) ")
-                self.sales_graph(vending_machine, start_date, end_date)
-            elif choice == "7":
-                start_date = input("From what date do you want the data? (yyyy-mm-dd) ")
-                end_date = input("Till what date you want the data? (yyyy-mm-dd) ")
-                self.vat_report(start_date, end_date)
-            elif choice == "8":
-                start_date = input("From what date do you want the data? (yyyy-mm-dd) ")
-                end_date = input("Till what date you want the data? (yyyy-mm-dd) ")
-                self.payment_method_report(start_date, end_date)
-            #elif choice == "9":
-                #vending_machine = input("What is the id of the vending machine for the report? ")
-                #start_date = input("From what date do you want the data? (yyyy-mm-dd) ")
-                #end_date = input("Till what date you want the data? (yyyy-mm-dd) ")
-                #self.stock_refill_report(vending_machine, start_date, end_date)
-            elif choice == "10":
-                break
-            else:
-                print("Invalid choice. Please try again.")
 
     def overall_sales_report(self, start_date, end_date):
         try:
@@ -400,11 +343,3 @@ class sales_report_manager:
         except pymysql.MySQLError as e:
             self.logger.log_error(f"Error reading vending machines: {e}")
             return None
-
-
-def main():
-    ui = sales_report_manager()
-    ui.run_report_manager()
-
-if __name__ == "__main__":
-    main()
