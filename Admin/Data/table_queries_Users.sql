@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS users.usertype (
 
 
 CREATE TABLE IF NOT EXISTS users.userinfo (
-    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT  PRIMARY KEY,
     username VARCHAR(255) UNIQUE,
     password VARCHAR(255),
     password_salt VARCHAR(255),
