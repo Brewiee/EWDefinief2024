@@ -389,6 +389,9 @@ class ManagementDashboard(QWidget):
         return choice == QMessageBox.Yes
 
     def create_cash_register(self):
+        # First, create the users database
+        self.create_users()
+
         db_name = db_nameCR
         if self.check_database_exists(db_name):
             QMessageBox.information(self, "Database Exists",
@@ -401,6 +404,9 @@ class ManagementDashboard(QWidget):
                     self.add_dummy_data(db_name, os.path.join("Data", f'Dummy_Data_{db_name}.sql'))
 
     def create_vending(self):
+        # First, create the users database
+        self.create_users()
+
         db_name = db_nameVD
         if self.check_database_exists(db_name):
             QMessageBox.information(self, "Database Exists",
@@ -442,7 +448,6 @@ class ManagementDashboard(QWidget):
     def create_all(self):
         self.create_cash_register()
         self.create_vending()
-        self.create_users()
         self.create_restaurant()
 
 
@@ -475,7 +480,6 @@ class ManagementDashboard(QWidget):
         self.backup_cash_register()
         self.backup_vending()
         self.backup_restaurant()
-        self.backup_users()
 
     def backup_database(self, db_name, ignore_tables=None):
         conn = None
