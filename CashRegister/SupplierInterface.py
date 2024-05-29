@@ -30,7 +30,7 @@ class NumericTableWidgetItem(QTableWidgetItem):
         else:
             return QTableWidgetItem.__lt__(self, other)
 
-class CustomerManagementApp(QMainWindow):
+class SupplierManagementApp(QMainWindow):
     def __init__(self):
         super().__init__()
 
@@ -539,6 +539,6 @@ if __name__ == "__main__":
     palette.setColor(QPalette.HighlightedText, Qt.black)
     app.setPalette(palette)
 
-    window = CustomerManagementApp()
+    window = SupplierManagementApp()
     window.showMaximized()  # Open window in full-screen mode
     sys.exit(app.exec())
