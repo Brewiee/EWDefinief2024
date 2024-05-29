@@ -284,7 +284,7 @@ class ManagementDashboard(QWidget):
         drop_box = self.create_button_box("Admin functions", [
             {"text": "Drop Tables", "icon": "drop.png", "function": self.drop_tables},
             {"text": "Panic button", "icon": "panic.png", "function": self.panic},
-            {"text": "DBManager button", "icon": "DBManager.png", "function": self.dbmanager},
+            {"text": "DBManager", "icon": "DBManager.png", "function": self.dbmanager},
         ])
         boxes_layout.addWidget(drop_box)
 

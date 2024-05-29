@@ -22,8 +22,7 @@ CREATE TABLE IF NOT EXISTS orders (
     rs_table_number INT,
     rs_order_time DATETIME,
     rs_status ENUM('placed', 'prepared', 'served', 'paid'),
-    FOREIGN KEY (rs_user_id) REFERENCES users.userinfo(user_id),
-    FOREIGN KEY (rs_table_number) REFERENCES tables(rs_table_id)
+    FOREIGN KEY (rs_user_id) REFERENCES users.userinfo(user_id)
 );
 
 -- Create table for order details
