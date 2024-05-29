@@ -647,7 +647,7 @@ class DatabaseManager(QMainWindow):
 
         # Specify the directory for backups
         backup_directory = os.path.expanduser(
-            r"C:\Users\janha\OneDrive\Documenten\SYNTRA PXL\PYTHON\Eindwerk2024\Jan-Willem\Backups")
+            r"C:\Users\..\Downloads")
 
         # Create the directory if it doesn't exist
         if not os.path.exists(backup_directory):
