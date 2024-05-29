@@ -1,6 +1,6 @@
 -- Create table for menu items
 CREATE TABLE IF NOT EXISTS menu_items (
-    rs_item_id INT PRIMARY KEY,
+    rs_item_id INT PRIMARY KEY AUTO_INCREMENT,
     rs_name VARCHAR(255),
     rs_description TEXT,
     rs_price DECIMAL(10,2),
@@ -9,26 +9,25 @@ CREATE TABLE IF NOT EXISTS menu_items (
 
 -- Create table for tables
 CREATE TABLE IF NOT EXISTS tables (
-    rs_table_id INT PRIMARY KEY,
-    rs_number INT,
+    rs_table_id INT PRIMARY KEY ,
+    rs_number INT ,
     rs_seats INT,
     rs_status ENUM('available', 'occupied', 'reserved', 'locked')
 );
 
 -- Create table for orders
 CREATE TABLE IF NOT EXISTS orders (
-    rs_order_id INT PRIMARY KEY,
+    rs_order_id INT PRIMARY KEY AUTO_INCREMENT,
     rs_user_id INT,
     rs_table_number INT,
     rs_order_time DATETIME,
     rs_status ENUM('placed', 'prepared', 'served', 'paid'),
-    FOREIGN KEY (rs_user_id) REFERENCES users.userinfo(user_id),
-    FOREIGN KEY (rs_table_number) REFERENCES tables(rs_table_id)
+    FOREIGN KEY (rs_user_id) REFERENCES users.userinfo(user_id)
 );
 
 -- Create table for order details
 CREATE TABLE IF NOT EXISTS orderdetails (
-    rs_order_detail_id INT PRIMARY KEY,
+    rs_order_detail_id INT PRIMARY KEY AUTO_INCREMENT,
     rs_order_id INT,
     rs_item_id INT,
     rs_quantity INT,

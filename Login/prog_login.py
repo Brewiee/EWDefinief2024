@@ -46,7 +46,7 @@ class LoginDatabaseFunctions(QMainWindow):
 
     def init_ui(self):
         self.setWindowTitle("General login")
-        self.setGeometry(100, 100, 300, 250)
+        self.setGeometry(800, 200, 300, 250)
         self.setStyleSheet(object_stylesheet.central_widget())
 
         central_widget = QWidget()
@@ -85,7 +85,7 @@ class LoginDatabaseFunctions(QMainWindow):
 
     def setup_password_visibility_button(self, layout):
         self.password_visibility_button = QPushButton()
-        self.password_visibility_button.setIcon(QIcon("eye_icon1.png"))
+        self.password_visibility_button.setIcon(QIcon("../Icons/eye_icon1.png"))
         self.password_visibility_button.setCheckable(True)
         self.password_visibility_button.setIconSize(QSize(24, 24))
         self.password_visibility_button.toggled.connect(self.toggle_password_visibility)
@@ -119,9 +119,9 @@ class LoginDatabaseFunctions(QMainWindow):
     def eventFilter(self, obj, event):
         if obj == self.password_visibility_button:
             if event.type() == QEvent.HoverEnter:
-                self.password_visibility_button.setIcon(QIcon("eye_icon1-inverted.png"))
+                self.password_visibility_button.setIcon(QIcon("../Icons/eye_icon1-inverted.png"))
             elif event.type() == QEvent.HoverLeave:
-                self.password_visibility_button.setIcon(QIcon("eye_icon1.png"))
+                self.password_visibility_button.setIcon(QIcon("../Icons/eye_icon1.png"))
         return super().eventFilter(obj, event)
 
     def check_username(self):
