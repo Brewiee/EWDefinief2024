@@ -11,7 +11,7 @@ def generate_salt():
     return bcrypt.gensalt()
 
 def main():
-    passwords = ['Super']
+    passwords = ['Vasiliss']
     salt = generate_salt()
 
     print("Password\tSalt\t\tHashed Password")

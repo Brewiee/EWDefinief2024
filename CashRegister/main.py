@@ -50,6 +50,7 @@ class MainMenuApp(QMainWindow):
         # Add actions to the Invoices menu
         self.add_menu_action(self.invoices_menu, "Manage Invoices", self.open_invoice_management)
 
+        self.add_menu_action(self.close_menu, "Close Window", self.close_application)
         self.add_menu_action(self.close_menu, "Close Application", self.close_application)
 
         self.current_widget = None  # Keep track of the current widget
