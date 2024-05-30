@@ -11,12 +11,12 @@ CREATE TABLE IF NOT EXISTS Category (
 CREATE TABLE IF NOT EXISTS Supplier (
     CR_Supplier_Supplier_ID INT AUTO_INCREMENT PRIMARY KEY,
     CR_Supplier_Name VARCHAR(255),
+    CR_Supplier_Email VARCHAR(255),
     CR_Supplier_Country VARCHAR(255),
     CR_Supplier_Address VARCHAR(255),
     CR_Supplier_Zipcode INT,
     CR_Supplier_City VARCHAR(255),
     CR_Supplier_Phone_number VARCHAR(20),
-    CR_Supplier_Email VARCHAR(255),
     CR_Supplier_VAT VARCHAR(255),
     FOREIGN KEY (CR_Supplier_Zipcode) REFERENCES PostalCode(CR_PostalCode_Zipcode)
 );
@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS Product (
     CR_Product_Max_Stock INT,
     CR_Product_Supplier_ID INT,
     CR_Product_Category_ID INT,
+    CR_Product_DateIn DATE,
     FOREIGN KEY (CR_Product_Category_ID) REFERENCES Category(CR_Category_Category_ID),
     FOREIGN KEY (CR_Product_Supplier_ID) REFERENCES Supplier(CR_Supplier_Supplier_ID)
 );
@@ -125,6 +126,15 @@ CREATE TABLE IF NOT EXISTS Invoice_Line (
     CR_Invoice_Line_Invoice_ID INT,
     CR_Invoice_Line_Product_ID INT,
     CR_Invoice_Line_Order_Line_Quantity INT,
+    CR_Invoice_Line_VAT_percentage INT,
+    CR_Invoice_Line_Additional_Details VARCHAR(255),
     FOREIGN KEY (CR_Invoice_Line_Invoice_ID) REFERENCES Invoice(CR_Invoice_Invoice_ID),
     FOREIGN KEY (CR_Invoice_Line_Product_ID) REFERENCES Product(CR_Product_Product_ID)
+);
+
+CREATE TABLE IF NOT EXISTS Additional_Detail (
+    CR_Additional_Detail_ID INT AUTO_INCREMENT PRIMARY KEY,
+    CR_Additional_Detail_Invoice_Line_ID INT,
+    CR_Additional_Detail_Text VARCHAR(255),
+    FOREIGN KEY (CR_Additional_Detail_Invoice_Line_ID) REFERENCES Invoice_Line(CR_Invoice_Line_Invoice_Line_ID)
 );
