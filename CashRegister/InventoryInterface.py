@@ -61,9 +61,9 @@ class InventoryManagementApp(QMainWindow):
 
         # Add table view for products
         self.table = QTableWidget()
-        self.table.setColumnCount(7)
+        self.table.setColumnCount(8)
         self.table.setHorizontalHeaderLabels(
-            ["ID", "Product Code", "Product Name", "Stock Quantity", "Buy In", "Supplier", "Category"])
+            ["ID", "Product Code", "Product Name", "Stock Quantity", "Min. Stock", "Buy In", "Supplier", "Category"])
         self.layout.addWidget(self.table)
 
         # Enable sorting
@@ -88,6 +88,7 @@ class InventoryManagementApp(QMainWindow):
                         p.CR_Product_ProductCode,
                         p.CR_Product_Name,
                         p.CR_Product_Stock_quantity,
+                        p.CR_Product_Min_Stock,
                         p.CR_Product_Price_B,
                         s.CR_Supplier_Name,
                         c.CR_Category_Name
@@ -103,9 +104,13 @@ class InventoryManagementApp(QMainWindow):
                 self.table.setRowCount(len(products))
                 for row, product in enumerate(products):
                     for col, field in enumerate(product.values()):
-                        if col in [0, 3, 4]:  # Numeric fields
-                            item = NumericTableWidgetItem(str(field))
-                        else:  # Default for other fields
+                        if col in [0, 3, 4, 5]:  # Numeric fields
+                            if col == 3 and field < product['CR_Product_Min_Stock']:  # Check if stock is lower than min
+                                item = NumericTableWidgetItem(str(field))
+                                item.setForeground(QColor("red"))  # Set text color to red
+                            else:
+                                item = NumericTableWidgetItem(str(field))
+                        else:
                             item = QTableWidgetItem(str(field))
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # Read-only
                         self.table.setItem(row, col, item)
@@ -121,15 +126,15 @@ class InventoryManagementApp(QMainWindow):
             class PDF(FPDF):
                 def header(self):
                     self.set_font('Arial', 'B', 12)
-                    self.cell(0, 10, 'Inventory List - Date: ' + datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 0, 0, 'L')
+                    self.cell(0, 10, 'Inventory List - Date: ' + datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 0, 0,
+                              'L')
                     self.ln(20)
 
             pdf = PDF(orientation='P')
             pdf.set_auto_page_break(auto=True, margin=15)
             pdf.add_page()
 
-            page_width = pdf.w - 2 * pdf.l_margin
-            col_widths = [page_width / 7] * 7
+            headers = ["ID", "Product Code", "Product Name", "Stock Quantity", "Buy In", "Supplier", "Category"]
 
             with self.conn.cursor() as cursor:
                 cursor.execute("""
@@ -157,25 +162,30 @@ class InventoryManagementApp(QMainWindow):
                 else:
                     sorted_products = sorted(products, key=lambda x: x['CR_Product_Product_ID'])
 
+                # Calculate the width for each column
+                col_widths = [0] * len(headers)
                 pdf.set_font("Arial", size=8)
+                for i, header in enumerate(headers):
+                    col_widths[i] = max(col_widths[i], pdf.get_string_width(header) + 4)
 
-                headers = ["ID", "Product Code", "Product Name", "Stock Quantity", "Buy In", "Supplier", "Category"]
+                for product in sorted_products:
+                    for i, field in enumerate(product.values()):
+                        col_widths[i] = max(col_widths[i], pdf.get_string_width(str(field)) + 4)
+
+                total_width = sum(col_widths)
+                if total_width > pdf.w - 2 * pdf.l_margin:
+                    scaling_factor = (pdf.w - 2 * pdf.l_margin) / total_width
+                    col_widths = [w * scaling_factor for w in col_widths]
+
+                pdf.set_font("Arial", 'B', 8)
                 for i, header in enumerate(headers):
                     pdf.cell(col_widths[i], 10, header, border=1)
                 pdf.ln()
 
+                pdf.set_font("Arial", size=8)
                 for product in sorted_products:
                     for i, field in enumerate(product.values()):
-                        if i in [2, 5, 6]:
-                            data = str(field)
-                            font_size = 8
-                            while pdf.get_string_width(data) > col_widths[i] - 2:
-                                font_size -= 0.1
-                                pdf.set_font("Arial", size=font_size)
-                            pdf.cell(col_widths[i], 8, data, border=1)
-                            pdf.set_font("Arial", size=8)
-                        else:
-                            pdf.cell(col_widths[i], 8, str(field), border=1)
+                        pdf.cell(col_widths[i], 8, str(field), border=1)
                     pdf.ln()
 
             filename, _ = QFileDialog.getSaveFileName(self, "Save PDF", "", "PDF files (*.pdf)")
