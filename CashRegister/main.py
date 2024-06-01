@@ -7,6 +7,7 @@ from CustomerInterface import CustomerManagementApp
 from SupplierInterface import SupplierManagementApp
 from ProductInterface import ProductManagementApp
 from InvoiceInterface import InvoiceManagementApp
+from InventoryInterface import InventoryManagementApp
 
 windows_base_dir = "C:/Users/M.Akif Haleplioglu/PycharmProjects/Eindwerk_voorbereiding"
 
@@ -33,6 +34,7 @@ class MainMenuApp(QMainWindow):
         self.add_menu_action(self.customers_menu, "Manage Customers", self.open_customer_management)
         self.add_menu_action(self.suppliers_menu, "Manage Suppliers", self.open_supplier_management)
         self.add_menu_action(self.products_menu, "Manage Products", self.open_product_management)
+        self.add_menu_action(self.products_menu, "Manage Inventory", self.open_inventory_management)
         self.add_menu_action(self.invoices_menu, "Manage Invoices", self.open_invoice_management)
         self.add_menu_action(self.close_menu, "Close Current Window", self.close_current_window)
         self.add_menu_action(self.close_menu, "Close Application", self.close_application)
@@ -66,6 +68,10 @@ class MainMenuApp(QMainWindow):
         self.open_management_window(ProductManagementApp, "Manage Products")
 
     @Slot()
+    def open_inventory_management(self):
+        self.open_management_window(InventoryManagementApp, "Manage Inventory")
+
+    @Slot()
     def open_supplier_management(self):
         self.open_management_window(SupplierManagementApp, "Manage Suppliers")
 
@@ -95,9 +101,18 @@ class MainMenuApp(QMainWindow):
 
     @Slot()
     def close_application(self):
-        reply = QMessageBox.question(self, "Close Application", "Do you want to close?", QMessageBox.Yes | QMessageBox.No)
+        reply = QMessageBox.question(self, "Close Application", "Do you want to close?",
+                                     QMessageBox.Yes | QMessageBox.No)
         if reply == QMessageBox.Yes:
             self.close()
+
+    def closeEvent(self, event):
+        reply = QMessageBox.question(self, "Close Application", "Do you want to close?",
+                                     QMessageBox.Yes | QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            event.accept()
+        else:
+            event.ignore()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

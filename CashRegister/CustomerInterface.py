@@ -432,7 +432,9 @@ class CustomerManagementApp(QMainWindow):
                     pdf.ln()
 
             filename, _ = QFileDialog.getSaveFileName(self, "Save PDF", "", "PDF files")
-            if filename:
+            if not filename:
+                return
+            else:
                 # Append current time to the file name
                 current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
                 pdf_output_path = f"{filename}_{current_time}.pdf"
