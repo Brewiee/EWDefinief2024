@@ -131,7 +131,7 @@ class StBackOrderManagementApp(QMainWindow):
                     cursor.execute("""
                         UPDATE Storage_Backorder
                         SET 
-                            CR_StBackorder_Status
+                            CR_StBackorder_Status = %s
                         WHERE 
                             CR_StBackorder_Backorder_ID = %s
                     """, (status, backorder_id))
