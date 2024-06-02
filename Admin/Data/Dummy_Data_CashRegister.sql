@@ -1,29 +1,10 @@
 -- Dummy data for PostalCode table
-INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(3600, 'Genk');
-INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(3500, 'Hasselt');
-INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(3630, 'Maasmechelen');
-INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(3530, 'Houthalen-Helchteren');
-INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(1000, 'Brussel');
-INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(2000, 'Antwerpen');
-INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(3000, 'Leuven');
-INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(4000, 'Luik');
-INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(5000, 'Namen');
-INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(6000, 'Charleroi');
-INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(7000, 'Bergen');
-INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(8000, 'Brugge');
-INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(9000, 'Gent');
-INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(8500, 'Kortrijk');
-INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(1500, 'Halle');
-INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(2500, 'Lier');
-INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(3500, 'Hasselt');
-INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(4500, 'Hoei');
-INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(5500, 'Dinant');
-INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(6500, 'Beaumont');
-INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(7500, 'Doornik');
-INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(9500, 'Geraardsbergen');
-INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(1050, 'Elsene');
-INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(2050, 'Antwerpen');
-
+INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(3600, 'GENK');
+INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(3500, 'HASSELT');
+INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(3630, 'MAASMECHELEN');
+INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(3530, 'HOUTHALEN-HELCHTEREN');
+INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(2000, 'ANTWERPEN');
+INSERT INTO PostalCode (CR_PostalCode_Zipcode, CR_PostalCode_City) VALUES(1000, 'BRUSSEL');
 
 -- Dummy data for Category table
 INSERT INTO Category (CR_Category_Category_ID, CR_Category_Name) VALUES(1, 'Smartphones');
