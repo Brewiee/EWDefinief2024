@@ -198,10 +198,10 @@ class InvoiceManagementApp(QMainWindow):
         self.table.setColumnCount(11)
         # Set the width of the "Product" column
         product_column_width = self.table.columnWidth(0)
-        self.table.setColumnWidth(0, product_column_width + 230)
+        self.table.setColumnWidth(0, product_column_width + 210)
         # Set the width of the "Product Information" column
         product_info_column_width = self.table.columnWidth(5)
-        self.table.setColumnWidth(7, product_info_column_width + 175)
+        self.table.setColumnWidth(7, product_info_column_width + 170)
         self.table.setHorizontalHeaderLabels(["Product", "Quantity", "Unit Price (VAT ex)", "VAT %", "VAT",
                                               "Unit Price (VAT in)", "Line Total", "Product Information (e.g. s/n)",
                                               "", "", ""])
