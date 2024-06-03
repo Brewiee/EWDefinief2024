@@ -9,6 +9,7 @@ from ProductInterface import ProductManagementApp
 from InvoiceInterface import InvoiceManagementApp
 from InventoryInterface import InventoryManagementApp
 from StBackOrderInterface import StBackOrderManagementApp
+from SaBackOrderInterface import SaBackOrderManagementApp
 
 ICON_FOLDER = "../Icons/"
 
@@ -39,6 +40,7 @@ class MainMenuApp(QMainWindow):
         self.add_menu_action(self.products_menu, "Manage Products", self.open_product_management)
         self.add_menu_action(self.products_menu, "Manage Inventory", self.open_inventory_management)
         self.add_menu_action(self.products_menu, "Manage Storage Backorder", self.open_stbackorder_management)
+        self.add_menu_action(self.products_menu, "Manage Sales Backorder", self.open_sabackorder_management)
         self.add_menu_action(self.invoices_menu, "Manage Invoices", self.open_invoice_management)
         self.add_menu_action(self.close_menu, "Close Current Window", self.close_current_window)
         self.add_menu_action(self.close_menu, "Close Application", self.close_application)
@@ -78,6 +80,10 @@ class MainMenuApp(QMainWindow):
     @Slot()
     def open_stbackorder_management(self):
         self.open_management_window(StBackOrderManagementApp, "Manage Storage Backorder")
+
+    @Slot()
+    def open_sabackorder_management(self):
+        self.open_management_window(SaBackOrderManagementApp, "Manage Sales Backorder")
 
     @Slot()
     def open_supplier_management(self):
