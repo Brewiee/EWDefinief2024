@@ -1,11 +1,13 @@
 import sys
+import os
 from PySide6.QtWidgets import QApplication, QMainWindow, QPushButton, QGridLayout, QWidget
 from PySide6.QtCore import QTimer
+from PySide6.QtGui import QIcon
 import pymysql.cursors
 from gui_choice_menu import MainMenu
 
 USER = 1
-
+ICON_FOLDER = "../Icons/"
 
 def connect_to_database():
     try:
@@ -53,6 +55,8 @@ class TableSelectionWindow(QMainWindow):
         # Grid layout for buttons
         self.layout = QGridLayout(self.central_widget)
         self.load_table_buttons()
+        icon_path = os.path.join(ICON_FOLDER, "favicon.png")
+        self.setWindowIcon(QIcon(icon_path))
 
     def load_table_buttons(self):
         try:

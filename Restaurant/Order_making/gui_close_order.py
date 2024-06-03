@@ -2,12 +2,14 @@ import sys
 import os
 import uuid
 from PySide6.QtWidgets import (QApplication, QMainWindow, QPushButton, QVBoxLayout, QMessageBox, QTreeView, QWidget, QLabel)
-from PySide6.QtGui import QStandardItemModel, QStandardItem
+from PySide6.QtGui import QStandardItemModel, QStandardItem, QIcon
 from PySide6.QtCore import Signal
 from pymysql import connect, cursors
 from fpdf import FPDF
 from datetime import datetime
 
+
+ICON_FOLDER = "../Icons/"
 TAX = 0.15
 
 class ViewOrderToClose(QMainWindow):
@@ -54,6 +56,8 @@ class ViewOrderToClose(QMainWindow):
 
         widget.setLayout(layout)
         self.setCentralWidget(widget)
+        icon_path = os.path.join(ICON_FOLDER, "favicon.png")
+        self.setWindowIcon(QIcon(icon_path))
 
     def view_order(self):
         try:

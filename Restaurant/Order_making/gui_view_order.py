@@ -1,4 +1,6 @@
 import sys
+import os
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QPushButton, QMessageBox,
                                QTreeView)
 from PySide6.QtGui import QStandardItemModel, QStandardItem
@@ -6,6 +8,7 @@ from PySide6.QtCore import Signal
 from pymysql import connect, cursors
 
 
+ICON_FOLDER = "../Icons/"
 
 
 class ViewOrder(QMainWindow):
@@ -41,6 +44,8 @@ class ViewOrder(QMainWindow):
 
         widget.setLayout(layout)
         self.setCentralWidget(widget)
+        icon_path = os.path.join(ICON_FOLDER, "favicon.png")
+        self.setWindowIcon(QIcon(icon_path))
 
     def connect_to_database(self):
         try:

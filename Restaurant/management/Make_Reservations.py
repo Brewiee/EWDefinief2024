@@ -1,9 +1,13 @@
 import sys
+import os
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, \
     QCalendarWidget, QComboBox, QMessageBox
 from PySide6.QtCore import Signal, QDate
 import pymysql
 
+
+ICON_FOLDER = "../Icons/"
 
 class CustomerWindow(QMainWindow):
     closing = Signal()  # Define a signal for when the window is closing
@@ -52,7 +56,8 @@ class CustomerWindow(QMainWindow):
         main_layout.addWidget(self.time_combobox)
         main_layout.addWidget(self.make_reservation_button)
         main_layout.addWidget(self.exit_button)
-
+        icon_path = os.path.join(ICON_FOLDER, "favicon.png")
+        self.setWindowIcon(QIcon(icon_path))
     def closeEvent(self, event):
         self.closing.emit()  # Emit the closing signal
         event.accept()

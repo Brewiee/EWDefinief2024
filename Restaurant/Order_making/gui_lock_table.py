@@ -1,6 +1,9 @@
 from PySide6.QtWidgets import QDialog, QMessageBox
 from PySide6.QtCore import Signal
+from PySide6.QtGui import QIcon
+import os
 
+ICON_FOLDER = "../Icons/"
 class LockTheTable(QDialog):
     about_to_close = Signal()
 
@@ -15,6 +18,8 @@ class LockTheTable(QDialog):
     def initUI(self, status):
         self.setWindowTitle("Lock Table")
         self.setGeometry(100, 100, 300, 200)
+        icon_path = os.path.join(ICON_FOLDER, "favicon.png")
+        self.setWindowIcon(QIcon(icon_path))
 
     def lock_table(self):
         print(f"Locking table {self.table_number}")

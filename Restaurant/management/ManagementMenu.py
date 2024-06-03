@@ -1,4 +1,6 @@
 import sys
+import os
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (QApplication, QMainWindow, QPushButton, QWidget, QVBoxLayout)
 from PySide6.QtCore import Qt
 # from user_management import UserManagement
@@ -7,7 +9,7 @@ from order_management import OrderManagement
 from table_management import TableManagementWidget
 from Reservation_management import ReservationManagement
 
-
+ICON_FOLDER = "../Icons/"
 class DashboardWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -46,6 +48,8 @@ class DashboardWindow(QMainWindow):
         reservation_management_button.clicked.connect(self.open_reservation_management)
         layout.addWidget(reservation_management_button)
 
+        icon_path = os.path.join(ICON_FOLDER, "favicon.png")
+        self.setWindowIcon(QIcon(icon_path))
     # def open_user_management(self):
     #     self.user_management_window = UserManagement()  # Assume you have a UserManagement class defined
     #     self.user_management_window.show()

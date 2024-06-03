@@ -1,10 +1,13 @@
 import sys
+import os
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit, QLabel,
                                QTableWidget, QTableWidgetItem, QMessageBox, QDialog, QFormLayout, QTextEdit, QComboBox)
 from PySide6.QtCore import QTimer
 from pymysql import connect, cursors
 from decimal import Decimal
 
+ICON_FOLDER = "../Icons/"
 ITEMS = ["Our Famous", "Greek Burgers", "Loaded Fries", "For the Team", "Kids menu", "Starter Bites", "Siders", "Drinks", "Traditionals"]
 
 class MenuManagement(QWidget):
@@ -52,6 +55,8 @@ class MenuManagement(QWidget):
 
         self.layout.addLayout(self.add_item_layout)
         self.setLayout(self.layout)
+        icon_path = os.path.join(ICON_FOLDER, "favicon.png")
+        self.setWindowIcon(QIcon(icon_path))
 
     def load_menu_items(self):
         self.table.setRowCount(0)
@@ -103,16 +108,31 @@ class MenuManagement(QWidget):
             return
 
         confirmation = QMessageBox.question(self, "Confirm Action",
-                                             "Are you sure you want to add this menu item?",
-                                             QMessageBox.Yes | QMessageBox.No)
+                                            "Are you sure you want to add this menu item?",
+                                            QMessageBox.Yes | QMessageBox.No)
         if confirmation == QMessageBox.Yes:
             try:
                 with self.db_connection.cursor() as cursor:
-                    cursor.execute("INSERT INTO menu_items (rs_name, rs_description, rs_price, rs_category) VALUES (%s, %s, %s, %s)",
-                                   (name, description, price, category))
+                    # Pull the last item of rs_item_id
+                    cursor.execute("SELECT COALESCE(MAX(rs_item_id), 0) AS max_id FROM menu_items")
+                    result = cursor.fetchone()
+                    last_id = result['max_id']
+                    new_id = last_id + 1
+
+                    # Insert the new menu item with the new_id
+                    cursor.execute(
+                        "INSERT INTO menu_items (rs_item_id, rs_name, rs_description, rs_price, rs_category) VALUES (%s, %s, %s, %s, %s)",
+                        (new_id, name, description, price, category)
+                    )
                     self.db_connection.commit()
                     QMessageBox.information(self, "Success", "Menu item added successfully.")
                     self.load_menu_items()  # Reload menu items
+
+                    # Clear the input fields
+                    self.name_input.clear()
+                    self.description_input.clear()
+                    self.price_input.clear()
+                    self.category_input.setCurrentIndex(0)  # Reset to the first category
             except Exception as e:
                 QMessageBox.warning(self, "Database Error", f"An error occurred: {e}")
         else:
