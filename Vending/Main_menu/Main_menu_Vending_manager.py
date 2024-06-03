@@ -4,48 +4,13 @@ from PySide6.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QHBoxL
     QSizePolicy, QGridLayout
 from PySide6.QtGui import QIcon, QPixmap, QDesktopServices, QFont
 from PySide6.QtCore import Qt, QUrl
-
 from Vending.Product_manager.ProductGUI import ProductGUI
 from Vending.Stock_manager.inventory_manager_GUI import inventory_manager
 from Vending.Report_manager.sales_reports_GUI_v2 import report_manager
 from Vending.Vending_machine_manager.Vending_machine_manager_GUI import VendingMachineManagerGUI
 from Vending.Log_creator.class_custom_logger import CustomLogger
 
-LOVE = "../../../love.txt"
-
-class LoveWindow(QWidget):
-    def open_love_file(self, event):
-        file_path = LOVE
-        try:
-            with open(file_path, 'r') as file:
-                content = file.read()
-                self.love_window = LoveWindow(content)
-                self.love_window.show()
-        except FileNotFoundError:
-            print("File not found")
-
-    def __init__(self, content):
-        super().__init__()
-        self.setWindowTitle('Love')
-        self.setGeometry(100, 100, 400, 300)
-
-        # Create a vertical layout for the window
-        layout = QVBoxLayout()
-
-        # Create a text edit widget to display the content
-        self.text_edit = QTextEdit()
-        font = QFont("Courier New")
-        font.setPointSize(12)
-        self.text_edit.setFont(font)
-        self.text_edit.setReadOnly(True)
-        self.text_edit.setPlainText(content)
-
-        # Add the text edit widget to the layout
-        layout.addWidget(self.text_edit)
-
-        # Set the layout to the window
-        self.setLayout(layout)
-
+LOVE = "../love.txt"
 
 class MainLayout(QWidget):
     """
@@ -119,10 +84,7 @@ class MainLayout(QWidget):
         QDesktopServices.openUrl(QUrl("https://example.com"))
 
     def open_love_file(self, event):
-        """
-        Open the love.txt file and display its content in a new window.
-        """
-        file_path = "love.txt"
+        file_path = LOVE
         try:
             with open(file_path, 'r') as file:
                 content = file.read()
@@ -150,7 +112,6 @@ class MainLayout(QWidget):
             widget = item.widget()
             if widget is not None:
                 widget.setParent(None)
-
 
 class Dashboard(QWidget):
     """
@@ -262,6 +223,29 @@ class Dashboard(QWidget):
             if widget is not None:
                 widget.setParent(None)
 
+class LoveWindow(QWidget):
+
+    def __init__(self, content):
+        super().__init__()
+        self.setWindowTitle('Love')
+        self.setGeometry(100, 100, 400, 300)
+
+        # Create a vertical layout for the window
+        layout = QVBoxLayout()
+
+        # Create a text edit widget to display the content
+        self.text_edit = QTextEdit()
+        font = QFont("Courier New")
+        font.setPointSize(12)
+        self.text_edit.setFont(font)
+        self.text_edit.setReadOnly(True)
+        self.text_edit.setPlainText(content)
+
+        # Add the text edit widget to the layout
+        layout.addWidget(self.text_edit)
+
+        # Set the layout to the window
+        self.setLayout(layout)
 
 if __name__ == '__main__':
     """
