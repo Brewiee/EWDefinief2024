@@ -9,11 +9,17 @@ class create_pdf:
         self.headers = headers
         self.filename = filename
         self.title = title
-        self.save_path = save_path
+        self.save_path = save_path if save_path else "../Vending/Reports/"
 
     def generate_pdf(self):
-        doc = SimpleDocTemplate(self.filename, pagesize=letter)
+        # Ensure the save path directory exists
+        if not os.path.exists(self.save_path):
+            os.makedirs(self.save_path)
 
+        # Combine the save path and filename
+        pdf_output_path = os.path.join(self.save_path, self.filename)
+
+        doc = SimpleDocTemplate(pdf_output_path, pagesize=letter)
         elements = []
 
         # Create table for the title
@@ -43,10 +49,6 @@ class create_pdf:
         elements.append(table)
 
         # Save the PDF file
-        if self.save_path:
-            pdf_output_path = os.path.join(self.save_path, self.filename)
-        else:
-            pdf_output_path = self.filename
-
         doc.build(elements)
+        print(pdf_output_path)
         return pdf_output_path
