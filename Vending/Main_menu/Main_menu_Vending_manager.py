@@ -76,13 +76,6 @@ class MainLayout(QWidget):
         self.setLayout(main_layout)
         self.show_main_layout()
 
-
-    def open_website(self, event):
-        """
-        Open the specified website in the default web browser.
-        """
-        QDesktopServices.openUrl(QUrl("https://example.com"))
-
     def open_love_file(self, event):
         file_path = LOVE
         try:

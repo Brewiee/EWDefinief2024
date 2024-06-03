@@ -5,9 +5,10 @@ from PySide6.QtGui import QIcon, QPixmap, QDesktopServices, QFontDatabase, QFont
 from MainMenuButtonsManager import Dashboard as ButtonsDashboard
 from PySide6.QtCore import Qt, QUrl, QFile, QIODevice
 import os
+import subprocess
 
 ICON_FOLDER = "../../Icons/"
-LOVE = "../../love.txt"
+
 class LoveWindow(QWidget):
     def __init__(self, content):
         super().__init__()
@@ -77,16 +78,9 @@ class MainLayout(QWidget):
         self.show()
         self.setWindowIcon(QIcon(icon_path))
 
-    def open_website(self, event):
-        QDesktopServices.openUrl(QUrl("https://example.com"))
-
     def open_love_file(self, event):
-        file_path = LOVE
         try:
-            with open(file_path, 'r') as file:
-                content = file.read()
-                self.love_window = LoveWindow(content)
-                self.love_window.show()
+            subprocess.Popen(["python", r"../../love.py"])
         except FileNotFoundError:
             print("File not found")
 
