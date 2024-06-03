@@ -13,8 +13,6 @@ from main_menu_restaurant import main_menu_restaurant
 from main_menu_vending import main_menu_vending
 from subprocess import Popen
 
-
-
 class LoginDatabaseFunctions(QMainWindow):
     def __init__(self):
 
@@ -269,7 +267,7 @@ class LoginDatabaseFunctions(QMainWindow):
     def logout_due_to_inactivity(self):
         # Calculate the time difference between now and the last activity time
         time_diff = (datetime.now() - self.last_activity_time).seconds
-        if time_diff >= 300:  # if the user has been inactive for 3 seconds
+        if time_diff >= 3600:  # if the user has been inactive for 3 seconds
             self.user_activity_timer.stop()
             # Terminate the current subprocess if exists
             if self.current_sub_process:
@@ -279,7 +277,6 @@ class LoginDatabaseFunctions(QMainWindow):
             self.username_edit.setText("")
             # Show the login window again
             self.show()
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

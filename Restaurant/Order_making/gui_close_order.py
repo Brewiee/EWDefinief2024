@@ -86,7 +86,7 @@ class ViewOrderToClose(QMainWindow):
                         total_before_tax += item['Subtotal']
                         self.total_before_tax_label.setText(f"Total before tax: Eur {float(total_before_tax):.2f}")
                         self.total_after_tax_label.setText(
-                            f"Total after tax: Eur{float(total_before_tax) * (1 + TAX):.2f}")
+                            f"Total after tax: Eur {float(total_before_tax) * (1 + TAX):.2f}")
 
                 else:
                     QMessageBox.information(self, "No Orders", "No orders found for the selected table.")
@@ -148,7 +148,8 @@ class ViewOrderToClose(QMainWindow):
             # Generate a unique identifier
             unique_id = str(uuid.uuid4().hex)[:8]  # Get the first 8 characters of a UUID
             # Construct the directory name
-            directory_name = f"receipts_{current_month_year}"
+            directory_name = f"..\\receipts_{current_month_year}"
+
 
             # Construct the filename with the unique identifier
             date_directory = os.path.join(directory_name, current_date)
