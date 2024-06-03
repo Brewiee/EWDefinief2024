@@ -1,9 +1,13 @@
 from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit, QLabel,
-                               QTableWidget, QTableWidgetItem, QMessageBox, QDialog, QComboBox, QCalendarWidget)
+                               QTableWidget, QTableWidgetItem, QMessageBox, QDialog, QComboBox, QCalendarWidget, QDialogButtonBox)
 from PySide6.QtCore import QTimer, Signal
 from pymysql import connect, cursors
-from datetime import datetime
+from datetime import datetime, date
 from Make_Reservations import CustomerWindow
+import os
+from PySide6.QtGui import QIcon
+
+ICON_FOLDER = "../Icons/"
 
 class UpdateReservationDialog(QDialog):
     dialogClosed = Signal()
@@ -52,7 +56,8 @@ class UpdateReservationDialog(QDialog):
         self.load_reservation_data(reservation_data)
 
         self.table_number_combo.currentIndexChanged.connect(self.update_table_id_and_seats_label)
-
+        icon_path = os.path.join(ICON_FOLDER, "favicon.png")
+        self.setWindowIcon(QIcon(icon_path))
     def load_reservation_data(self, reservation_data):
         self.reservation_id = reservation_data['rs_reservation_id']
         self.customer_name_edit.setText(reservation_data['rs_name'])
@@ -168,19 +173,47 @@ class UpdateReservationDialog(QDialog):
             self.table_ID_label.clear()
             self.table_seats_label.clear()
 
+class DateSelectionDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Select Reservation Date")
+        self.layout = QVBoxLayout()
+        self.calendar = QCalendarWidget()
+        self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.buttons.accepted.connect(self.accept)
+        self.buttons.rejected.connect(self.reject)
+
+        self.layout.addWidget(self.calendar)
+        self.layout.addWidget(self.buttons)
+        self.setLayout(self.layout)
+
+    def get_selected_date(self):
+        return self.calendar.selectedDate().toString("yyyy-MM-dd")
+
 class ReservationManagement(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Reservation Management")
         self.setGeometry(100, 100, 950, 600)
         self.db_connection = self.create_db_connection()
-        self.initUI()
-        self.load_reservations()
-        self.add_reservation_window = None
+        self.selected_date = self.get_reservation_date()
+        if self.selected_date is not None:
+            self.initUI()
+            self.load_reservations()
+            self.add_reservation_window = None
 
     def create_db_connection(self):
         return connect(host='localhost', user='dbadmin', password='dbadmin', database='restaurant',
                        cursorclass=cursors.DictCursor)
+
+    def get_reservation_date(self):
+        dialog = DateSelectionDialog(self)
+        if dialog.exec() == QDialog.Accepted:
+            return dialog.get_selected_date()
+        else:
+            QMessageBox.warning(self, 'Input Error', 'No date selected. Exiting application.')
+            QApplication.quit()
+            return None
 
     def initUI(self):
         self.layout = QVBoxLayout()
@@ -203,13 +236,12 @@ class ReservationManagement(QWidget):
 
     def load_reservations(self):
         self.table.setRowCount(0)
-        today_date = datetime.now().date()
         try:
             with self.db_connection.cursor() as cursor:
                 cursor.execute(
                     "SELECT rs_reservation_id, customer.rs_name, rs_reservation_date, rs_reservation_time, rs_party_size, rs_table_id FROM reservation "
                     "JOIN customer ON reservation.rs_customer_id = customer.rs_customer_id "
-                    "WHERE rs_reservation_date = %s", (today_date,))
+                    "WHERE rs_reservation_date = %s", (self.selected_date,))
                 for row_number, row_data in enumerate(cursor):
                     self.table.insertRow(row_number)
                     for column_number, data in enumerate(row_data.values()):

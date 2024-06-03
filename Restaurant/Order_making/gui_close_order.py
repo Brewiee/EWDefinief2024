@@ -2,12 +2,14 @@ import sys
 import os
 import uuid
 from PySide6.QtWidgets import (QApplication, QMainWindow, QPushButton, QVBoxLayout, QMessageBox, QTreeView, QWidget, QLabel)
-from PySide6.QtGui import QStandardItemModel, QStandardItem
+from PySide6.QtGui import QStandardItemModel, QStandardItem, QIcon
 from PySide6.QtCore import Signal
 from pymysql import connect, cursors
 from fpdf import FPDF
 from datetime import datetime
 
+
+ICON_FOLDER = "../Icons/"
 TAX = 0.15
 
 class ViewOrderToClose(QMainWindow):
@@ -54,6 +56,8 @@ class ViewOrderToClose(QMainWindow):
 
         widget.setLayout(layout)
         self.setCentralWidget(widget)
+        icon_path = os.path.join(ICON_FOLDER, "favicon.png")
+        self.setWindowIcon(QIcon(icon_path))
 
     def view_order(self):
         try:
@@ -86,7 +90,7 @@ class ViewOrderToClose(QMainWindow):
                         total_before_tax += item['Subtotal']
                         self.total_before_tax_label.setText(f"Total before tax: Eur {float(total_before_tax):.2f}")
                         self.total_after_tax_label.setText(
-                            f"Total after tax: Eur{float(total_before_tax) * (1 + TAX):.2f}")
+                            f"Total after tax: Eur {float(total_before_tax) * (1 + TAX):.2f}")
 
                 else:
                     QMessageBox.information(self, "No Orders", "No orders found for the selected table.")
@@ -148,7 +152,8 @@ class ViewOrderToClose(QMainWindow):
             # Generate a unique identifier
             unique_id = str(uuid.uuid4().hex)[:8]  # Get the first 8 characters of a UUID
             # Construct the directory name
-            directory_name = f"receipts_{current_month_year}"
+            directory_name = f"..\\receipts_{current_month_year}"
+
 
             # Construct the filename with the unique identifier
             date_directory = os.path.join(directory_name, current_date)

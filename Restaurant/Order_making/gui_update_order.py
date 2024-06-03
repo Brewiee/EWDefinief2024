@@ -1,10 +1,13 @@
 import sys
+import os
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QPushButton, QTableWidget, \
     QTableWidgetItem, QSpinBox, QMessageBox, QGridLayout
 from PySide6.QtCore import Signal, QDateTime
 from pymysql import connect, cursors
 from functools import partial
 
+ICON_FOLDER = "../Icons/"
 
 class UpdateOrder(QMainWindow):
     orderUpdated = Signal()
@@ -44,6 +47,8 @@ class UpdateOrder(QMainWindow):
 
         self.display_categories()
         self.select_and_load_existing_order()
+        icon_path = os.path.join(ICON_FOLDER, "favicon.png")
+        self.setWindowIcon(QIcon(icon_path))
 
     def display_categories(self):
         # Clear main layout before loading new items

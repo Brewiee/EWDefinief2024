@@ -4,7 +4,9 @@ from PySide6.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QHBoxL
 from PySide6.QtGui import QIcon, QPixmap, QDesktopServices, QFontDatabase, QFont
 from MainMenuButtonsManager import Dashboard as ButtonsDashboard
 from PySide6.QtCore import Qt, QUrl, QFile, QIODevice
+import os
 
+ICON_FOLDER = "../Icons/"
 class LoveWindow(QWidget):
     def __init__(self, content):
         super().__init__()
@@ -72,6 +74,8 @@ class MainLayout(QWidget):
         main_layout.addWidget(home_button, alignment=Qt.AlignBottom | Qt.AlignLeft)
 
         self.show()
+        icon_path = os.path.join(ICON_FOLDER, "favicon.png")
+        self.setWindowIcon(QIcon(icon_path))
 
     def open_website(self, event):
         QDesktopServices.openUrl(QUrl("https://example.com"))

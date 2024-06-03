@@ -1,8 +1,11 @@
 import sys
+import os
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit, QLabel,
                                QTableWidget, QTableWidgetItem, QMessageBox, QDialog, QFormLayout, QComboBox)
 from pymysql import connect, cursors
 
+ICON_FOLDER = "../Icons/"
 
 class TableManagementWidget(QWidget):
     def __init__(self):
@@ -12,6 +15,8 @@ class TableManagementWidget(QWidget):
         self.db_connection = self.create_db_connection()
         self.initUI()
         self.load_tables()
+        icon_path = os.path.join(ICON_FOLDER, "favicon.png")
+        self.setWindowIcon(QIcon(icon_path))
 
     def create_db_connection(self):
         return connect(host='localhost', user='dbadmin', password='dbadmin', database='restaurant',

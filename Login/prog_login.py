@@ -1,9 +1,10 @@
 import bcrypt
 import sys
+import pymysql
+import os
 from PySide6.QtWidgets import *
 from PySide6.QtGui import QIcon
 from PySide6.QtCore import QEvent, QSize, QTimer
-import pymysql
 from subprocess import Popen
 from datetime import datetime
 from stylesheet_login import object_stylesheet
@@ -13,7 +14,7 @@ from main_menu_restaurant import main_menu_restaurant
 from main_menu_vending import main_menu_vending
 from subprocess import Popen
 
-
+ICON_FOLDER = "../Icons/"
 
 class LoginDatabaseFunctions(QMainWindow):
     def __init__(self):
@@ -59,6 +60,8 @@ class LoginDatabaseFunctions(QMainWindow):
         #hahahaha
         self.setup_login_button(layout)
         self.setup_error_label(layout)
+        icon_path = os.path.join(ICON_FOLDER, "favicon.png")
+        self.setWindowIcon(QIcon(icon_path))
 
     def setup_username_section(self, layout):
         self.username_label = QLabel("Username:")
@@ -225,6 +228,9 @@ class LoginDatabaseFunctions(QMainWindow):
             self.error_label.setText("Please select a module")
             return
 
+        # Call get_user_type to update self.user_type
+        self.get_user_type()
+
         conn = self.connect_to_database()
         if conn:
             try:
@@ -242,12 +248,14 @@ class LoginDatabaseFunctions(QMainWindow):
                         # Start the subprocess corresponding to the selected module
                         if selected_module == "Vending":
                             self.current_sub_process = Popen(["python", "../vending/main.py"])
-                        elif selected_module == "Restaurant":
-                            self.current_sub_process = Popen(["python", "../restaurant/main.py"])
+                        elif selected_module == "Restaurant" and self.user_type == 2:
+                            self.current_sub_process = Popen(["python", "../restaurant/UI/MainMenuButtonsManager.py"])
+                        elif selected_module == "Restaurant" and self.user_type == 3:
+                            self.current_sub_process = Popen(["python", "../Restaurant/UI/MainMenuButtonsStaff.py"])
                         elif selected_module == "Cash register":
                             self.current_sub_process = Popen(["python", "../cashregister/main.py"])
                         elif selected_module == "SuperAdmin":
-                            self.current_sub_process = Popen(["python", "../superadmin/main.py"])
+                            self.current_sub_process = Popen(["python", "../Admin/SuperAdmin.py"])
                         else:
                             QMessageBox.warning(self, "Login", "Invalid module selected.")
                             return
@@ -265,11 +273,10 @@ class LoginDatabaseFunctions(QMainWindow):
                 conn.close()
         else:
             print("Failed to connect to the database.")
-
     def logout_due_to_inactivity(self):
         # Calculate the time difference between now and the last activity time
         time_diff = (datetime.now() - self.last_activity_time).seconds
-        if time_diff >= 300:  # if the user has been inactive for 3 seconds
+        if time_diff >= 3600:  # if the user has been inactive for 3 seconds
             self.user_activity_timer.stop()
             # Terminate the current subprocess if exists
             if self.current_sub_process:
@@ -279,7 +286,6 @@ class LoginDatabaseFunctions(QMainWindow):
             self.username_edit.setText("")
             # Show the login window again
             self.show()
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

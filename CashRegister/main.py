@@ -1,6 +1,6 @@
 from PySide6.QtCore import Slot
 from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QMessageBox
-from PySide6.QtGui import QAction, QPainter, QPixmap, QColor, QPalette, Qt
+from PySide6.QtGui import QAction, QPainter, QPixmap, QColor, QPalette, Qt, QIcon
 import sys
 import os
 from CustomerInterface import CustomerManagementApp
@@ -10,7 +10,7 @@ from InvoiceInterface import InvoiceManagementApp
 from InventoryInterface import InventoryManagementApp
 from StBackOrderInterface import StBackOrderManagementApp
 
-windows_base_dir = "C:/Users/M.Akif Haleplioglu/PycharmProjects/Eindwerk_voorbereiding"
+ICON_FOLDER = "../Icons/"
 
 class MainMenuApp(QMainWindow):
     def __init__(self):
@@ -24,6 +24,8 @@ class MainMenuApp(QMainWindow):
         self.setCentralWidget(self.central_widget)
         self.layout = QVBoxLayout(self.central_widget)
         self.central_widget.setLayout(self.layout)
+        icon_path = os.path.join(ICON_FOLDER, "favicon.png")
+        self.setWindowIcon(QIcon(icon_path))
 
         self.menu_bar = self.menuBar()
         self.customers_menu = self.menu_bar.addMenu("Customers")
@@ -45,7 +47,7 @@ class MainMenuApp(QMainWindow):
 
     def paintEvent(self, event):
         painter = QPainter(self)
-        pixmap_path = os.path.join(windows_base_dir, "Icons", "hors.png")
+        pixmap_path = os.path.join(ICON_FOLDER, "horse.png")
         pixmap = QPixmap(pixmap_path)
         if not pixmap.isNull():
             scaled_pixmap = pixmap.scaled(self.width() // 2, self.height() // 2, Qt.KeepAspectRatio, Qt.SmoothTransformation)

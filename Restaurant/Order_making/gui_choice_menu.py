@@ -1,11 +1,15 @@
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QPushButton, QSizePolicy, QMessageBox
 from PySide6.QtCore import Signal, Qt
+from PySide6.QtGui import QIcon
 from gui_create_order import CreateOrder
 from gui_view_order import ViewOrder
 from gui_close_order import ViewOrderToClose
 from gui_update_order import UpdateOrder
 from gui_lock_table import LockTheTable, UnlockTheTable
+import os
+
+ICON_FOLDER = "../Icons/"
 class MainMenu(QMainWindow):
     # Define a custom signal
     about_to_close = Signal()
@@ -96,6 +100,8 @@ class MainMenu(QMainWindow):
 
         widget.setLayout(layout)
         self.setCentralWidget(widget)
+        icon_path = os.path.join(ICON_FOLDER, "favicon.png")
+        self.setWindowIcon(QIcon(icon_path))
 
 
     def create_order(self):

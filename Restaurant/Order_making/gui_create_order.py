@@ -1,11 +1,13 @@
 import sys
+import os
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QPushButton, \
     QTableWidget, QTableWidgetItem, QSpinBox, QMessageBox, QGridLayout
 from PySide6.QtCore import QDateTime, Signal
+from PySide6.QtGui import QIcon
 from pymysql import connect, cursors
 from functools import partial
 
-
+ICON_FOLDER = "../Icons/"
 class CreateOrder(QMainWindow):
     # Signal to indicate that the order has been placed
     about_to_close = Signal()
@@ -41,6 +43,8 @@ class CreateOrder(QMainWindow):
 
         # Display menu items when the window is initialized
         self.display_categories()
+        icon_path = os.path.join(ICON_FOLDER, "favicon.png")
+        self.setWindowIcon(QIcon(icon_path))
 
     def display_categories(self):
         # Clear main layout before loading new items

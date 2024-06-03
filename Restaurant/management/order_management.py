@@ -1,8 +1,12 @@
 import sys
+import os
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem,
                                QMessageBox, QPushButton, QLineEdit, QLabel, QComboBox, QDialog, QFormLayout)
 from PySide6.QtCore import QDateTime
 from pymysql import connect, cursors
+
+ICON_FOLDER = "../Icons/"
 
 
 class OrderManagement(QWidget):
@@ -25,6 +29,8 @@ class OrderManagement(QWidget):
         self.table.setHorizontalHeaderLabels(["OrderID", "UserID", "TableNumber", "Status", "Update", "Delete"])
         self.layout.addWidget(self.table)
         self.setLayout(self.layout)
+        icon_path = os.path.join(ICON_FOLDER, "favicon.png")
+        self.setWindowIcon(QIcon(icon_path))
 
     def load_orders(self):
         self.table.setRowCount(0)
