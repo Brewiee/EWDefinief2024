@@ -302,6 +302,7 @@ class VendingMachineManagerGUI(QMainWindow):
                 success = self.vending_machine_interface.delete_vending_machine(selected_machine_id)
                 if success:
                     self.logger.log_info(f"Vending machine id: {selected_machine_id} deleted successfully!")
+                    QMessageBox.information(self, "Success", "Vending machine deleted successfully!")
                     self.populate_vending_machine_menu()
                     self.clear_input_fields()
                 else:

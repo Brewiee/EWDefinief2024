@@ -1,4 +1,5 @@
 import sys
+import os
 from PySide6.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QTextEdit, \
     QSizePolicy, QGridLayout
 from PySide6.QtGui import QIcon, QPixmap, QDesktopServices, QFont
@@ -59,7 +60,9 @@ class MainLayout(QWidget):
         Initialize the user interface.
         """
         self.setWindowTitle('Main Layout')
-        self.setWindowIcon(QIcon("favicon.png"))
+        ICON_FOLDER = "../Icons/"
+        icon_path = os.path.join(ICON_FOLDER, "favicon.png")
+        self.setWindowIcon(QIcon(icon_path))
         self.setGeometry(100, 100, 1920, 1080)
         self.showMaximized()
 
@@ -100,6 +103,7 @@ class MainLayout(QWidget):
 
         self.setLayout(main_layout)
         self.show_main_layout()
+
 
     def open_website(self, event):
         """

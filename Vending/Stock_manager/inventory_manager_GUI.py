@@ -214,7 +214,7 @@ class inventory_manager(QMainWindow):
                     pdf_data = [["Inventory ID", "Product Name", "Current Stock", "Needed to refill",
                                  "Refill stock"]] + refill_values
                     pdf_headers = ["Inventory ID", "Product Name", "Stock", "Refill", "Refill Stock"]
-                    save_path = "C://Syntra//EIndwerk//EIndwerk_final//Joeri//Vending_manager//data//refill_reports"
+                    save_path = "../Reports"
                     pdf_generator = create_pdf(pdf_data, pdf_headers, pdf_filename, title=pdf_title, save_path=save_path)
                     pdf_generator.generate_pdf()
                     self.logger.log_info(f"PDF saved at: {save_path}")
@@ -250,7 +250,7 @@ class inventory_manager(QMainWindow):
                     pdf_title = f"stock to max refill report for Machine: {machine_location}"
                     pdf_data = [["Inventory ID", "Product Name", "Current Stock", "Needed to refill", "Max Stock"]] + max_values
                     pdf_headers = ["Inventory ID", "Product Name", "Stock", "Refill", "Max Stock"]
-                    save_path = "C://Syntra//EIndwerk//EIndwerk_final//Joeri//Vending_manager//data//refill_reports"
+                    save_path = "../Reports"
                     pdf_generator = create_pdf(pdf_data, pdf_headers, pdf_filename, title=pdf_title,
                                                save_path=save_path)
                     pdf_generator.generate_pdf()

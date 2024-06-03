@@ -100,8 +100,20 @@ class product_interface:
         """
         try:
             with self.connection.cursor() as cursor:
-                # First, delete related rows in the inventory table
+                # First, update related rows in the invoice table to set vd_invoice_product_id to NULL
+                update_invoice_sql = "UPDATE invoice SET vd_invoice_product_id=NULL WHERE vd_invoice_product_id=%s"
+                cursor.execute(update_invoice_sql, (product_id,))
+
+                # Then delete related rows in the inventory table
                 inventory_sql = "DELETE FROM inventory WHERE vd_inventory_product_id=%s"
+                cursor.execute(inventory_sql, (product_id,))
+
+                # second, update related rows in the supplier table to set vd_supplier_product_id to NULL
+                update_invoice_sql = "UPDATE supplier SET vd_supplier_product_id=NULL WHERE vd_supplier_product_id=%s"
+                cursor.execute(update_invoice_sql, (product_id,))
+
+                # Then delete related rows in the supplier table
+                inventory_sql = "DELETE FROM supplier WHERE vd_supplier_product_id=%s"
                 cursor.execute(inventory_sql, (product_id,))
 
                 # Now delete the product
@@ -117,4 +129,5 @@ class product_interface:
         except pymysql.MySQLError as e:
             # Log any SQL errors that occur during product deletion
             self.logger.log_error(f"Error deleting product: {e}")
+            print(f"Error deleting product ID: {product_id}, error: {e}")
             return False

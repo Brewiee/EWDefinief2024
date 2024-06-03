@@ -59,7 +59,10 @@ class vending_machine_interface:
                 # First, attempt to delete associated records in the inventory table
                 sql_delete_inventory = "DELETE FROM inventory WHERE vd_inventory_vending_machine_id=%s"
                 cursor.execute(sql_delete_inventory, (vending_id,))
-                # Next, attempt to delete the vending machine
+                # next, attemt to delete associated records in the invoice table
+                sql_delete_invoice = "DELETE FROM invoice WHERE vd_invoice_vending_machine_id=%s"
+                cursor.execute(sql_delete_invoice, (vending_id))
+                # Then, attempt to delete the vending machine
                 sql_delete_vending_machine = "DELETE FROM vending_machine WHERE vd_vending_machine_id=%s"
                 cursor.execute(sql_delete_vending_machine, (vending_id,))
                 self.connection.commit()
