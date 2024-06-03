@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QPushButton, QTableWidget, \
-    QTableWidgetItem, QMessageBox, QLabel, QLineEdit, QCheckBox, QHBoxLayout, QFileDialog, QComboBox
+    QTableWidgetItem, QMessageBox, QLabel, QLineEdit, QCheckBox, QHBoxLayout, QFileDialog, QComboBox, QDialogButtonBox, \
+    QDialog
 from PySide6.QtGui import QColor, QPalette, QIcon, QPixmap, QGuiApplication
 from PySide6.QtCore import Qt
 import sys
@@ -125,6 +126,11 @@ class ProductManagementApp(QMainWindow):
                 self.populate_category_combo_box()
                 self.category_combo_box.setFixedWidth(1000)  # Set custom width for the combo box
                 layout_row.addWidget(self.category_combo_box)
+
+                # Add button for adding a new category
+                self.add_category_button = QPushButton("Add Category")
+                self.add_category_button.clicked.connect(self.open_add_category_dialog)
+                layout_row.addWidget(self.add_category_button)
             else:
                 field_input = QLineEdit()
                 field_input.setObjectName(field_label.replace(":", "").replace(" ", "") + "LineEdit")  # Set object name
@@ -237,6 +243,31 @@ class ProductManagementApp(QMainWindow):
 
         except pymysql.Error as e:
             print("Error:", e)
+
+    def open_add_category_dialog(self):
+        dialog = AddCategoryDialog(self)
+        if dialog.exec() == QDialog.Accepted:
+            new_category_name = dialog.get_category_name()
+            if new_category_name:
+                self.save_new_category(new_category_name)
+
+    def save_new_category(self, category_name):
+        try:
+            with self.conn.cursor() as cursor:
+                query = "INSERT INTO Category (CR_Category_Name) VALUES (%s)"
+                cursor.execute(query, (category_name,))
+                self.conn.commit()
+
+                # Get the ID of the newly inserted category
+                new_category_id = cursor.lastrowid
+
+                # Add the new category to the combo box
+                self.category_combo_box.addItem(category_name, new_category_id)
+                self.category_combo_box.setCurrentText(category_name)
+
+                QMessageBox.information(self, "Success", f"Category '{category_name}' added successfully.")
+        except pymysql.Error as e:
+            QMessageBox.warning(self, "Error", f"Error adding new category: {str(e)}")
 
     def populate_supplier_combo_box(self):
         try:
@@ -564,6 +595,38 @@ class ProductManagementApp(QMainWindow):
                     visible = True
                     break
             self.table.setRowHidden(row, not visible)
+
+
+class AddCategoryDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.setWindowTitle("Add New Category")
+        self.setModal(True)
+
+        # Set up the layout for the dialog
+        self.layout = QVBoxLayout()
+
+        # Add a label
+        self.label = QLabel("Category Name:")
+        self.layout.addWidget(self.label)
+
+        # Add an input field
+        self.category_name_input = QLineEdit()
+        self.layout.addWidget(self.category_name_input)
+
+        # Add a button box for OK and Cancel buttons
+        self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.rejected.connect(self.reject)
+        self.layout.addWidget(self.button_box)
+
+        # Set the layout for the dialog
+        self.setLayout(self.layout)
+
+    def get_category_name(self):
+        return self.category_name_input.text().strip()
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

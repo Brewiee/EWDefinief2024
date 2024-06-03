@@ -1,3 +1,5 @@
+import textwrap
+
 from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget, QPushButton, QTableWidget, \
     QTableWidgetItem, QLabel, QLineEdit, QMessageBox, QCompleter, QCheckBox, QDialog, QPlainTextEdit
 from PySide6.QtGui import QColor, QPalette, QPixmap
@@ -198,10 +200,10 @@ class InvoiceManagementApp(QMainWindow):
         self.table.setColumnCount(11)
         # Set the width of the "Product" column
         product_column_width = self.table.columnWidth(0)
-        self.table.setColumnWidth(0, product_column_width + 230)
+        self.table.setColumnWidth(0, product_column_width + 210)
         # Set the width of the "Product Information" column
         product_info_column_width = self.table.columnWidth(5)
-        self.table.setColumnWidth(7, product_info_column_width + 175)
+        self.table.setColumnWidth(7, product_info_column_width + 170)
         self.table.setHorizontalHeaderLabels(["Product", "Quantity", "Unit Price (VAT ex)", "VAT %", "VAT",
                                               "Unit Price (VAT in)", "Line Total", "Product Information (e.g. s/n)",
                                               "", "", ""])
@@ -734,12 +736,31 @@ class InvoiceManagementApp(QMainWindow):
             line_total = self.table.item(row, 6).text()
             additional_details = self.additional_details_dict.get(row, "")
 
-            c.drawString(40, y, product_name)
-            c.drawString(230, y, quantity)
-            c.drawString(300, y, unit_price)
-            c.drawString(410, y, vat_value)
-            c.drawString(470, y, line_total)
-            y -= 15
+            # Calculate the space needed for product name
+            product_name_width = c.stringWidth(product_name)
+
+            # Determine if product name needs to be split into multiple lines
+            if product_name_width > 190:  # Adjust based on available space
+                # Split product name into lines that fit
+                lines = textwrap.wrap(product_name, width=38)  # Adjust width as needed
+                for index, line in enumerate(lines):
+                    c.drawString(40, y, line)
+                    if index == len(lines) - 1:
+                        # If it's the last line of the product name, align the quantity
+                        c.drawString(230, y, quantity)
+                        c.drawString(300, y, unit_price)
+                        c.drawString(410, y, vat_value)
+                        c.drawString(470, y, line_total)
+                    y -= 15
+            else:
+                c.drawString(40, y, product_name)
+                c.drawString(230, y, quantity)  # Draw quantity aligned with the product name
+                c.drawString(300, y, unit_price)
+                c.drawString(410, y, vat_value)
+                c.drawString(470, y, line_total)
+                y -= 15
+
+
             if additional_details:
                 details_string = "\n".join(additional_details)
                 for detail in details_string.splitlines():  # Split by newline character
