@@ -1,18 +1,22 @@
+# Import necessary modules and classes
 from Vending.Log_creator.class_custom_logger import CustomLogger
 from Vending.Database_connector.class_database_connector import database_connector
 import pymysql
 
+# Define the vending_machine_interface class to manage vending machines
 class vending_machine_interface:
     def __init__(self):
+        # Initialize logger and database connector
         self.logger = CustomLogger("Vending", "Logging")
         db_connector = database_connector()
         self.connection = db_connector.database_connection()
+        # Log messages for debugging, information, and errors
         self.logger.log_debug("Start Vending Machine Interface Debug Log")
         self.logger.log_info("Start Vending Machine Info Log")
         self.logger.log_error("Start Vending Machine Error Log")
 
-    def create_vending_machine(self, vending_location, vending_address, vending_postal_code, vending_city,
-                               vending_country):
+    def create_vending_machine(self, vending_location, vending_address, vending_postal_code, vending_city, vending_country):
+        # Method to create a new vending machine record in the database
         try:
             with self.connection.cursor() as cursor:
                 sql = ("INSERT INTO vending_machine (vd_vending_machine_location, vd_vending_machine_address, vd_vending_machine_postal_code, "
@@ -28,8 +32,8 @@ class vending_machine_interface:
         finally:
             self.logger.log_info("Vending machine creation process completed.")
 
-    def update_vending_machine(self, vending_id, vending_location, vending_address, vending_postal_code, vending_city,
-                               vending_country):
+    def update_vending_machine(self, vending_id, vending_location, vending_address, vending_postal_code, vending_city, vending_country):
+        # Method to update the details of an existing vending machine
         self.logger.log_debug(
             f"Updating Vending ID: {vending_id}, Vending Location: {vending_location}, Vending Address: {vending_address}, Postal Code: {vending_postal_code}, City: {vending_city}, Country: {vending_country}")
         try:
@@ -49,6 +53,7 @@ class vending_machine_interface:
             self.logger.log_info("Vending machine update process completed.")
 
     def delete_vending_machine(self, vending_id):
+        # Method to delete a vending machine record and its associated inventory from the database
         try:
             with self.connection.cursor() as cursor:
                 # First, attempt to delete associated records in the inventory table
@@ -65,6 +70,7 @@ class vending_machine_interface:
             return False
 
     def read_products(self):
+        # Method to read all products from the database
         try:
             with self.connection.cursor() as cursor:
                 sql = "SELECT * FROM product"
@@ -82,6 +88,7 @@ class vending_machine_interface:
             return None
 
     def choose_vending_machine(self):
+        # Method to retrieve distinct vending machines and their locations
         try:
             with self.connection.cursor() as cursor:
                 sql = """
@@ -103,6 +110,7 @@ class vending_machine_interface:
             return None
 
     def get_vending_machine_data(self, machine_name):
+        # Method to get data for a specific vending machine by its location name
         try:
             with self.connection.cursor() as cursor:
                 sql = "SELECT * FROM vending_machine WHERE vd_vending_machine_location = %s"
@@ -114,6 +122,7 @@ class vending_machine_interface:
             return None
 
     def set_up_vending_machine(self, vending_machine_id, product_id, min_stock=0, max_stock=0, refill_stock=0):
+        # Method to set up a vending machine with a specific product and stock levels
         try:
             with self.connection.cursor() as cursor:
                 # Check if the product already exists in the inventory for the vending machine

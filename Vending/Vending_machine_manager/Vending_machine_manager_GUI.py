@@ -12,20 +12,24 @@ class VendingMachineManagerGUI(QMainWindow):
         self.setWindowTitle("Vending Machine Manager")
         self.setGeometry(100, 100, 800, 600)
 
+        # Initialize logger and vending machine interface
         self.logger = CustomLogger("Vending", "Logging")
         self.vending_machine_interface = vending_machine_interface()
 
+        # Initialize database connection
         db_connector = database_connector()
         self.connection = db_connector.database_connection()
 
         self.logger.log_info("Start Vending Creator")
 
+        # Initialize GUI components
         self.create_widgets()
         self.combo_signal_connected = False
         self.vending_machine_combo.hide()
         self.product_combo.hide()
         self.machine_set_up_combo.hide()
 
+        # State variables to track ongoing operations
         self.save_in_progress = False
         self.creating_machine = False
         self.vending_machine_change_in_progress = False
@@ -40,6 +44,7 @@ class VendingMachineManagerGUI(QMainWindow):
         buttons_layout = QHBoxLayout()
         main_layout.addLayout(buttons_layout)
 
+        # Create buttons with their respective handlers
         button_data = [("Create vending machine", self.create_machine),
                        ("Update vending machine", self.update_machine),
                        ("Delete vending machine", self.delete_machine),
@@ -52,6 +57,7 @@ class VendingMachineManagerGUI(QMainWindow):
             button.setStyleSheet("text-align:left;")
             buttons_layout.addWidget(button)
 
+        # Combo boxes for vending machines and products
         self.vending_machine_combo = QComboBox()
         main_layout.addWidget(self.vending_machine_combo)
         self.product_combo = QComboBox()
@@ -59,12 +65,13 @@ class VendingMachineManagerGUI(QMainWindow):
         self.machine_set_up_combo = QComboBox()
         main_layout.addWidget(self.machine_set_up_combo)
 
+        # Layout for input fields
         input_layout = QGridLayout()
         main_layout.addLayout(input_layout)
         input_layout.setColumnStretch(1, 1)
-
         main_layout.addStretch(1)
 
+        # Input fields for vending machine details
         self.location_label = QLabel("Vending machine location:")
         input_layout.addWidget(self.location_label, 0, 0)
         self.location_entry = QLineEdit()
@@ -95,6 +102,7 @@ class VendingMachineManagerGUI(QMainWindow):
         self.country_entry.setPlaceholderText("Enter vending machine country")
         input_layout.addWidget(self.country_entry, 4, 1)
 
+        # Buttons for saving, adding products, and confirming deletion
         self.save_button = QPushButton("Save")
         input_layout.addWidget(self.save_button, 5, 0, 1, 2)
         self.save_button.clicked.connect(self.save_vending_machine)
@@ -119,12 +127,14 @@ class VendingMachineManagerGUI(QMainWindow):
 
         self.save_in_progress = True
 
+        # Retrieve input data
         vending_location = self.location_entry.text()
         vending_address = self.address_entry.text()
         vending_postal_str = self.postal_entry.text()
         vending_city = self.city_entry.text()
         vending_country = self.country_entry.text()
 
+        # Validate postal code
         if vending_postal_str.strip() == "":
             QMessageBox.warning(self, "Error", "Postal code cannot be empty!")
             self.reset_save_button()
@@ -137,6 +147,7 @@ class VendingMachineManagerGUI(QMainWindow):
             self.reset_save_button()
             return
 
+        # Create or update vending machine based on the current state
         if self.creating_machine:
             self.vending_machine_interface.create_vending_machine(vending_location, vending_address, vending_postal,
                                                                   vending_city, vending_country)
@@ -177,34 +188,27 @@ class VendingMachineManagerGUI(QMainWindow):
 
     def populate_vending_machine_menu(self):
         """Populate the vending machine drop-down menu."""
-        # Clear any existing items in the combo box
         self.vending_machine_combo.clear()
-
-        # Add the placeholder item at index 0
         self.vending_machine_combo.addItem("Please select a vending machine")
 
         vending_machines = self.vending_machine_interface.choose_vending_machine()
         if vending_machines:
             for machine_id, machine_location in vending_machines:
-                # Add machine location to combo box
                 self.vending_machine_combo.addItem(machine_location, machine_id)
         else:
             QMessageBox.warning(self, "Warning", "No vending machines found.")
 
     def populate_product_combo(self):
-        # clear any existing oroducts in the combo box
+        """Populate the product drop-down menu."""
         self.product_combo.clear()
-
-        # add the placeholder product at index 0
         self.product_combo.addItem("Please select a product")
 
         products = self.vending_machine_interface.read_products()
         if products:
             for product_id, product in products:
-                (self.product_combo.addItem(product, product_id))
+                self.product_combo.addItem(product, product_id)
         else:
-            QMessageBox.warning(self, "Warning", "No vending machines found.")
-
+            QMessageBox.warning(self, "Warning", "No products found.")
 
     def handle_vending_machine_change(self, index):
         """Handle changes in the vending machine selection."""
@@ -278,6 +282,7 @@ class VendingMachineManagerGUI(QMainWindow):
         self.vending_machine_combo.currentIndexChanged.connect(self.handle_vending_machine_change)
 
     def confirm_delete(self):
+        """Confirm deletion of the selected vending machine."""
         selected_index = self.vending_machine_combo.currentIndex()
         selected_machine = self.vending_machine_combo.currentText()
         selected_machine_id = self.vending_machine_combo.itemData(selected_index, Qt.UserRole)
@@ -294,13 +299,10 @@ class VendingMachineManagerGUI(QMainWindow):
                                                   f"Are you sure you want to delete vending machine '{selected_machine}'?",
                                                   QMessageBox.Yes | QMessageBox.No)
             if confirm_dialog == QMessageBox.Yes:
-                # Call the delete_vending_machine method from the vending machine interface
                 success = self.vending_machine_interface.delete_vending_machine(selected_machine_id)
                 if success:
                     self.logger.log_info(f"Vending machine id: {selected_machine_id} deleted successfully!")
-                    # Refresh vending machine menu
                     self.populate_vending_machine_menu()
-                    # Clear the input fields
                     self.clear_input_fields()
                 else:
                     self.logger.log_info(f"Failed to delete vending machine id {selected_machine_id}!")
