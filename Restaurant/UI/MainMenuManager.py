@@ -6,11 +6,13 @@ from MainMenuButtonsManager import Dashboard as ButtonsDashboard
 from PySide6.QtCore import Qt, QUrl, QFile, QIODevice
 import os
 
-ICON_FOLDER = "../Icons/"
+ICON_FOLDER = "../../Icons/"
+LOVE = "../../love.txt"
 class LoveWindow(QWidget):
     def __init__(self, content):
         super().__init__()
         self.setWindowTitle('Love')
+        icon_path = os.path.join(ICON_FOLDER, "favicon.png")
         self.setGeometry(100, 100, 400, 300)
         layout = QVBoxLayout()
         self.text_edit = QTextEdit()
@@ -23,7 +25,6 @@ class LoveWindow(QWidget):
         layout.addWidget(self.text_edit)
         self.setLayout(layout)
 
-
 class MainLayout(QWidget):
     def __init__(self):
         super().__init__()
@@ -31,7 +32,8 @@ class MainLayout(QWidget):
 
     def initUI(self):
         self.setWindowTitle('Main Layout')
-        self.setWindowIcon(QIcon("favicon.png"))  # Set window icon
+        icon_path = os.path.join(ICON_FOLDER, "favicon.png")
+        self.setWindowIcon(QIcon(icon_path))
         self.setGeometry(100, 100, 1920, 1080)  # Set window size to 1080p
         self.showMaximized()  # Start the program in full screen mode
 
@@ -44,7 +46,6 @@ class MainLayout(QWidget):
             logo_layout.addWidget(self.logo_label, alignment=Qt.AlignRight | Qt.AlignTop)  # Align logo to top right
             self.logo_label.setCursor(Qt.PointingHandCursor)
             self.logo_label.mousePressEvent = self.open_website
-
 
         love_label = QLabel("This program was designed with love ❤️")
         love_label.setAlignment(Qt.AlignRight | Qt.AlignBottom)
@@ -74,14 +75,13 @@ class MainLayout(QWidget):
         main_layout.addWidget(home_button, alignment=Qt.AlignBottom | Qt.AlignLeft)
 
         self.show()
-        icon_path = os.path.join(ICON_FOLDER, "favicon.png")
         self.setWindowIcon(QIcon(icon_path))
 
     def open_website(self, event):
         QDesktopServices.openUrl(QUrl("https://example.com"))
 
     def open_love_file(self, event):
-        file_path = "love.txt"
+        file_path = LOVE
         try:
             with open(file_path, 'r') as file:
                 content = file.read()

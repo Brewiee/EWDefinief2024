@@ -5,6 +5,8 @@ from PySide6.QtCore import Qt
 import subprocess
 import os
 
+ICON_FOLDER = "../../Icons/"
+
 class Dashboard(QWidget):
     def __init__(self):
         super().__init__()
@@ -40,7 +42,8 @@ class Dashboard(QWidget):
             col = i % num_columns
 
             button = QPushButton()
-            pixmap = QPixmap(f"{label.lower()}.png")
+            icon_path = os.path.join(ICON_FOLDER, f"{label.lower()}.png")
+            pixmap = QPixmap(icon_path)
             icon = QIcon(pixmap.scaled(170, 170, Qt.KeepAspectRatio))
             button.setIcon(icon)
             button.setIconSize(pixmap.rect().size())  # Set the icon size explicitly
