@@ -6,7 +6,8 @@ from MainMenuButtonsStaff import Dashboard as ButtonsDashboard
 from PySide6.QtCore import Qt, QUrl, QFile, QIODevice
 import os
 
-ICON_FOLDER = "../Icons/"
+ICON_FOLDER = "../../Icons/"
+LOVE = "../../love.txt"
 class LoveWindow(QWidget):
     def __init__(self, content):
         super().__init__()
@@ -77,7 +78,7 @@ class MainLayout(QWidget):
         self.setWindowIcon(QIcon(icon_path))
 
     def open_love_file(self, event):
-        file_path = "love.txt"
+        file_path = LOVE
         try:
             with open(file_path, 'r') as file:
                 content = file.read()
