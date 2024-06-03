@@ -10,7 +10,7 @@ from InvoiceInterface import InvoiceManagementApp
 from InventoryInterface import InventoryManagementApp
 from StBackOrderInterface import StBackOrderManagementApp
 
-windows_base_dir = "C:/Users/M.Akif Haleplioglu/PycharmProjects/Eindwerk_voorbereiding"
+ICON_FOLDER = "../Icons/"
 
 class MainMenuApp(QMainWindow):
     def __init__(self):
@@ -45,7 +45,7 @@ class MainMenuApp(QMainWindow):
 
     def paintEvent(self, event):
         painter = QPainter(self)
-        pixmap_path = os.path.join(windows_base_dir, "Icons", "hors.png")
+        pixmap_path = os.path.join(ICON_FOLDER, "horse.png")
         pixmap = QPixmap(pixmap_path)
         if not pixmap.isNull():
             scaled_pixmap = pixmap.scaled(self.width() // 2, self.height() // 2, Qt.KeepAspectRatio, Qt.SmoothTransformation)
