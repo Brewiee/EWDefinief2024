@@ -11,11 +11,18 @@ from Vending.Report_manager.sales_reports_GUI_v2 import report_manager
 from Vending.Vending_machine_manager.Vending_machine_manager_GUI import VendingMachineManagerGUI
 from Vending.Log_creator.class_custom_logger import CustomLogger
 
+LOVE = "../../../love.txt"
 
 class LoveWindow(QWidget):
-    """
-    A class to display the content of a love file in a separate window.
-    """
+    def open_love_file(self, event):
+        file_path = LOVE
+        try:
+            with open(file_path, 'r') as file:
+                content = file.read()
+                self.love_window = LoveWindow(content)
+                self.love_window.show()
+        except FileNotFoundError:
+            print("File not found")
 
     def __init__(self, content):
         super().__init__()

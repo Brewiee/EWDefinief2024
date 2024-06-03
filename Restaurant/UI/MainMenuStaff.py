@@ -2,7 +2,7 @@ import sys
 from PySide6.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QTextEdit, \
     QSpacerItem, QSizePolicy
 from PySide6.QtGui import QIcon, QPixmap, QDesktopServices, QFontDatabase, QFont
-from MainMenuButtonsManager import Dashboard as ButtonsDashboard
+from MainMenuButtonsStaff import Dashboard as ButtonsDashboard
 from PySide6.QtCore import Qt, QUrl, QFile, QIODevice
 import os
 
@@ -23,7 +23,6 @@ class LoveWindow(QWidget):
         layout.addWidget(self.text_edit)
         self.setLayout(layout)
 
-
 class MainLayout(QWidget):
     def __init__(self):
         super().__init__()
@@ -38,7 +37,7 @@ class MainLayout(QWidget):
         # Create layout for logo and love label
         logo_layout = QHBoxLayout()
         self.logo_label = QLabel()
-        logo_pixmap = QPixmap("newlogo.png")
+        logo_pixmap = QPixmap("address.png")
         if not logo_pixmap.isNull():
             self.logo_label.setPixmap(logo_pixmap.scaled(150, 150, Qt.KeepAspectRatio, Qt.SmoothTransformation))
             logo_layout.addWidget(self.logo_label, alignment=Qt.AlignRight | Qt.AlignTop)  # Align logo to top right
@@ -76,9 +75,6 @@ class MainLayout(QWidget):
         self.show()
         icon_path = os.path.join(ICON_FOLDER, "favicon.png")
         self.setWindowIcon(QIcon(icon_path))
-
-    def open_website(self, event):
-        QDesktopServices.openUrl(QUrl("https://example.com"))
 
     def open_love_file(self, event):
         file_path = "love.txt"
