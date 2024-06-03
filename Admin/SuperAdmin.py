@@ -8,7 +8,7 @@ import os
 import subprocess
 
 # Variables
-ICONS_FOLDER = "../icons/"
+ICON_FOLDER = "../icons/"
 Hname = "localhost"
 Uname = "dbadmin"
 Pword = "dbadmin"
@@ -245,6 +245,8 @@ class ManagementDashboard(QWidget):
 
         # Set dark mode background color
         self.setStyleSheet("background-color: #333333; color: white;")
+        icon_path = os.path.join(ICON_FOLDER, "favicon.png")
+        self.setWindowIcon(QIcon(icon_path))
 
         # Create a QHBoxLayout for the boxes
         boxes_layout = QHBoxLayout()
@@ -304,7 +306,7 @@ class ManagementDashboard(QWidget):
 
         for btn_data in buttons_data:
             button = QPushButton()
-            button.setIcon(QIcon(ICONS_FOLDER + btn_data["icon"]))
+            button.setIcon(QIcon(ICON_FOLDER + btn_data["icon"]))
             button.setIconSize(QSize(100, 100))
             button.setFixedSize(150, 150)
             button.clicked.connect(btn_data["function"])

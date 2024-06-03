@@ -320,7 +320,7 @@ class SupplierManagementApp(QMainWindow):
 
             # Save the new supplier to the database
             with self.conn.cursor() as cursor:
-                query = ("INSERT INTO Customer (CR_Supplier_Name, CR_Supplier_Email, CR_Supplier_Country, "
+                query = ("INSERT INTO Supplier (CR_Supplier_Name, CR_Supplier_Email, CR_Supplier_Country, "
                          "CR_Supplier_Address, CR_Supplier_Zipcode, CR_Supplier_City, CR_Supplier_Phone_number, "
                          "CR_Supplier_VAT) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)")
                 cursor.execute(query, (name, email, country, address, postal_code, city, phone, vat))

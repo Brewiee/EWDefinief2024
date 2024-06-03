@@ -321,7 +321,6 @@ class ProductGUI(QMainWindow):
 
     def delete_product(self):
         """Delete the selected product after confirmation and refresh the product list."""
-        # Similar to update_product, use QInputDialog to get product ID
 
         # Get the selected item from the TreeWidget
         selected_item = self.tree.currentItem()
@@ -331,19 +330,26 @@ class ProductGUI(QMainWindow):
             # Get the values of the selected item
             values = [selected_item.text(column) for column in range(self.tree.columnCount())]
             if values:
-                product_id = int(values[0])  # Assuming ID is the first column
-                product_name = values[2]  # Assuming Name is the third column
+                try:
+                    product_id = int(values[0])  # Assuming ID is the first column
+                    product_name = values[2]  # Assuming Name is the third column
+                except (IndexError, ValueError) as e:
+                    QMessageBox.critical(self, "Error", f"Failed to retrieve product details: {e}")
+                    return
 
                 # Ask for confirmation before deleting the product
                 confirm = QMessageBox.question(self, "Confirmation",
-                                                f"Are you sure you want to delete the product '{product_name}'?",
-                                                QMessageBox.Yes | QMessageBox.No)
+                                               f"Are you sure you want to delete the product '{product_name}'?",
+                                               QMessageBox.Yes | QMessageBox.No)
                 if confirm == QMessageBox.Yes:
                     try:
-                        self.product_interface.delete_product(product_id)
-                        QMessageBox.information(self, "Success", "Product deleted successfully!")
-                        self.change_occurred = True  # Set the flag to indicate a change
-                        self.refresh_products()  # Refresh the products list
+                        result = self.product_interface.delete_product(product_id)
+                        if result:
+                            QMessageBox.information(self, "Success", "Product deleted successfully!")
+                            self.change_occurred = True  # Set the flag to indicate a change
+                            self.refresh_products()  # Refresh the products list
+                        else:
+                            QMessageBox.critical(self, "Error", "Failed to delete product. It may not exist.")
                     except Exception as e:
                         QMessageBox.critical(self, "Error", f"Error deleting product: {e}")
                         self.logger.log_error(f"Error deleting product: {e}")

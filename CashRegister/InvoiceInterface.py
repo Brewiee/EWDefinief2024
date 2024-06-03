@@ -1,3 +1,5 @@
+import textwrap
+
 from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget, QPushButton, QTableWidget, \
     QTableWidgetItem, QLabel, QLineEdit, QMessageBox, QCompleter, QCheckBox, QDialog, QPlainTextEdit
 from PySide6.QtGui import QColor, QPalette, QPixmap
@@ -198,10 +200,10 @@ class InvoiceManagementApp(QMainWindow):
         self.table.setColumnCount(11)
         # Set the width of the "Product" column
         product_column_width = self.table.columnWidth(0)
-        self.table.setColumnWidth(0, product_column_width + 230)
+        self.table.setColumnWidth(0, product_column_width + 210)
         # Set the width of the "Product Information" column
         product_info_column_width = self.table.columnWidth(5)
-        self.table.setColumnWidth(7, product_info_column_width + 175)
+        self.table.setColumnWidth(7, product_info_column_width + 170)
         self.table.setHorizontalHeaderLabels(["Product", "Quantity", "Unit Price (VAT ex)", "VAT %", "VAT",
                                               "Unit Price (VAT in)", "Line Total", "Product Information (e.g. s/n)",
                                               "", "", ""])
@@ -635,6 +637,7 @@ class InvoiceManagementApp(QMainWindow):
             total_vat = 0
             self.total_amount_label.setText(f"€ {total_amount:.2f}")
             self.total_vat_amount_label.setText(f"€ {total_vat:.2f}")
+            self.customer_input.clear()
             self.additional_details_dict.clear()
 
         except (ValueError, pymysql.Error) as e:
@@ -734,12 +737,31 @@ class InvoiceManagementApp(QMainWindow):
             line_total = self.table.item(row, 6).text()
             additional_details = self.additional_details_dict.get(row, "")
 
-            c.drawString(40, y, product_name)
-            c.drawString(230, y, quantity)
-            c.drawString(300, y, unit_price)
-            c.drawString(410, y, vat_value)
-            c.drawString(470, y, line_total)
-            y -= 15
+            # Calculate the space needed for product name
+            product_name_width = c.stringWidth(product_name)
+
+            # Determine if product name needs to be split into multiple lines
+            if product_name_width > 190:  # Adjust based on available space
+                # Split product name into lines that fit
+                lines = textwrap.wrap(product_name, width=38)  # Adjust width as needed
+                for index, line in enumerate(lines):
+                    c.drawString(40, y, line)
+                    if index == len(lines) - 1:
+                        # If it's the last line of the product name, align the quantity
+                        c.drawString(230, y, quantity)
+                        c.drawString(300, y, unit_price)
+                        c.drawString(410, y, vat_value)
+                        c.drawString(470, y, line_total)
+                    y -= 15
+            else:
+                c.drawString(40, y, product_name)
+                c.drawString(230, y, quantity)  # Draw quantity aligned with the product name
+                c.drawString(300, y, unit_price)
+                c.drawString(410, y, vat_value)
+                c.drawString(470, y, line_total)
+                y -= 15
+
+
             if additional_details:
                 details_string = "\n".join(additional_details)
                 for detail in details_string.splitlines():  # Split by newline character
@@ -832,12 +854,12 @@ class InvoiceManagementApp(QMainWindow):
 
                         # If the user confirms, save the reorder details
                         if reply == QMessageBox.Yes:
-                            self.save_backorder(product['CR_Product_Product_ID'], reorder_quantity)
+                            self.save_stbackorder(product['CR_Product_Product_ID'], reorder_quantity)
 
         except pymysql.Error as e:
             QMessageBox.critical(self, 'Error', f"Error checking backorders for invoice: {str(e)}")
 
-    def save_backorder(self, product_id, reorder_quantity):
+    def save_stbackorder(self, product_id, reorder_quantity):
         try:
             # Fetch supplier details for the product
             supplier_details = self.fetch_supplier_details(product_id)
@@ -853,7 +875,7 @@ class InvoiceManagementApp(QMainWindow):
                                      reorder_quantity, 'Pending'))
                 self.conn.commit()
 
-                QMessageBox.information(self, 'Success', 'Backorder placed successfully.')
+                QMessageBox.information(self, 'Success', 'Backorder placed successfully for this product.')
 
         except pymysql.Error as e:
             QMessageBox.critical(self, 'Error', f"Error saving backorder: {str(e)}")
