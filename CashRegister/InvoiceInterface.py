@@ -637,6 +637,7 @@ class InvoiceManagementApp(QMainWindow):
             total_vat = 0
             self.total_amount_label.setText(f"€ {total_amount:.2f}")
             self.total_vat_amount_label.setText(f"€ {total_vat:.2f}")
+            self.customer_input.clear()
             self.additional_details_dict.clear()
 
         except (ValueError, pymysql.Error) as e:
@@ -853,12 +854,12 @@ class InvoiceManagementApp(QMainWindow):
 
                         # If the user confirms, save the reorder details
                         if reply == QMessageBox.Yes:
-                            self.save_backorder(product['CR_Product_Product_ID'], reorder_quantity)
+                            self.save_stbackorder(product['CR_Product_Product_ID'], reorder_quantity)
 
         except pymysql.Error as e:
             QMessageBox.critical(self, 'Error', f"Error checking backorders for invoice: {str(e)}")
 
-    def save_backorder(self, product_id, reorder_quantity):
+    def save_stbackorder(self, product_id, reorder_quantity):
         try:
             # Fetch supplier details for the product
             supplier_details = self.fetch_supplier_details(product_id)
@@ -874,7 +875,7 @@ class InvoiceManagementApp(QMainWindow):
                                      reorder_quantity, 'Pending'))
                 self.conn.commit()
 
-                QMessageBox.information(self, 'Success', 'Backorder placed successfully.')
+                QMessageBox.information(self, 'Success', 'Backorder placed successfully for this product.')
 
         except pymysql.Error as e:
             QMessageBox.critical(self, 'Error', f"Error saving backorder: {str(e)}")
