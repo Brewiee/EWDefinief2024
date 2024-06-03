@@ -402,6 +402,19 @@ class InvoiceManagementApp(QMainWindow):
 
     def add_product_to_invoice(self):
         try:
+            # Get customer details from customer_input
+            customer_details = self.customer_input.text().split(" - ")
+            if len(customer_details) < 6:
+                QMessageBox.warning(self, "Error", "Invalid customer details format.")
+                return
+
+            customer_id = int(customer_details[0])  # Ensure customer_id is an integer
+            customer_name = customer_details[1]
+            customer_address = customer_details[2]
+            customer_zipcode = customer_details[3]
+            customer_city = customer_details[4]
+            customer_vat = customer_details[5]
+
             # Get selected product details from product_input
             product_details = self.product_input.text().split(" - ")
             if len(product_details) < 5:
@@ -412,6 +425,22 @@ class InvoiceManagementApp(QMainWindow):
             unit_price = float(product_details[3])
             quantity = int(self.quantity_input.text())
             vat_percentage = float(self.vat_input.text())
+
+            # Check stock availability
+            current_stock = self.get_product_stock(product_id)
+            if quantity > current_stock:
+                result = QMessageBox.question(
+                    self,
+                    "Stock Warning",
+                    f"Not enough stock for {product_name}. Available quantity: {current_stock}.\n"
+                    "Would you like to proceed with a backorder?",
+                    QMessageBox.Yes | QMessageBox.No
+                )
+                if result == QMessageBox.No:
+                    return
+                else:
+                    backorder_quantity = quantity - current_stock
+                    self.handle_backorder(product_id, customer_id, backorder_quantity)
 
             # Calculate VAT value from the unit price
             vat_value = unit_price * vat_percentage / (100 + vat_percentage)
@@ -464,6 +493,48 @@ class InvoiceManagementApp(QMainWindow):
 
         except (ValueError, pymysql.Error) as e:
             QMessageBox.warning(self, "Error", f"Error adding product to invoice: {str(e)}")
+
+    def get_product_stock(self, product_id):
+        try:
+            # Assuming you have a database connection named 'db'
+            with self.conn.cursor() as cursor:
+                cursor.execute("SELECT CR_Product_Stock_quantity FROM Product WHERE CR_Product_Product_ID = %s", (product_id,))
+                result = cursor.fetchone()
+                if result:
+                    return result['CR_Product_Stock_quantity']
+                else:
+                    raise ValueError("Product not found in the database.")
+        except pymysql.Error as db_error:
+            QMessageBox.warning(self, "Database Error", f"Database error: {str(db_error)}")
+            raise
+
+    def handle_backorder(self, product_id, customer_id, backorder_quantity):
+        try:
+            with self.conn.cursor() as cursor:
+                cursor.execute(
+                    """
+                    INSERT INTO Sales_Backorder (CR_SaBackorder_Product_ID, CR_SaBackorder_Customer_ID, 
+                                                 CR_SaBackorder_Date, CR_SaBackorder_Quantity, CR_SaBackorder_Status)
+                    VALUES (%s, %s, CURDATE(), %s, 'Pending')
+                    """,
+                    (product_id, customer_id, backorder_quantity)
+                )
+                self.conn.commit()
+                QMessageBox.information(self, "Backorder",
+                                        f"A backorder for {backorder_quantity} units of the product has been created.")
+        except pymysql.Error as db_error:
+            QMessageBox.warning(self, "Database Error", f"Error creating backorder: {str(db_error)}")
+            self.db.rollback()
+
+    def get_customer_id(self):
+        try:
+            customer_details = self.customer_input.text().split(" - ")
+            if len(customer_details) < 6:
+                raise ValueError("Invalid customer details format.")
+            customer_id = int(customer_details[0])
+            return customer_id
+        except ValueError:
+            raise ValueError("Invalid customer ID. Please enter a valid integer.")
 
     def open_additional_details_dialog(self, row_position):
         dialog = QDialog(self)
