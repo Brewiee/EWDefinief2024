@@ -1,6 +1,6 @@
 from PySide6.QtCore import Slot
 from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QMessageBox
-from PySide6.QtGui import QAction, QPainter, QPixmap, QColor, QPalette, Qt
+from PySide6.QtGui import QAction, QPainter, QPixmap, QColor, QPalette, Qt, QIcon
 import sys
 import os
 from CustomerInterface import CustomerManagementApp
@@ -24,6 +24,8 @@ class MainMenuApp(QMainWindow):
         self.setCentralWidget(self.central_widget)
         self.layout = QVBoxLayout(self.central_widget)
         self.central_widget.setLayout(self.layout)
+        icon_path = os.path.join(ICON_FOLDER, "favicon.png")
+        self.setWindowIcon(QIcon(icon_path))
 
         self.menu_bar = self.menuBar()
         self.customers_menu = self.menu_bar.addMenu("Customers")
