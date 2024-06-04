@@ -23,14 +23,21 @@ class product_interface:
         """
         try:
             with self.connection.cursor() as cursor:
+                # Fetch the maximum existing product ID
+                cursor.execute("SELECT COALESCE(MAX(vd_product_id), 0) AS max_id FROM product")
+                result = cursor.fetchone()
+                last_id = result['max_id']
+                new_id = last_id + 1
+
                 # SQL query to insert a new product into the product table
-                sql = "INSERT INTO product (vd_product_code, vd_product_name, vd_product_price, vd_product_vat) VALUES (%s, %s, %s, %s)"
-                cursor.execute(sql, (product_code, product_name, product_price, product_vat))
+                sql = "INSERT INTO product (vd_product_id, vd_product_code, vd_product_name, vd_product_price, vd_product_vat) VALUES (%s, %s, %s, %s, %s)"
+                cursor.execute(sql, (new_id, product_code, product_name, product_price, product_vat))
                 self.connection.commit()
 
                 # Log successful product creation
                 self.logger.log_info(
-                    f"Product created: (Product code:{product_code}), (Product name: {product_name}), (Product price: {product_price}), (Product VAT: {product_vat})")
+                    f"Product created: (Product ID: {new_id}), (Product code: {product_code}), (Product name: {product_name}), (Product price: {product_price}), (Product VAT: {product_vat})"
+                )
             return True
         except pymysql.MySQLError as e:
             # Log any SQL errors that occur during product creation

@@ -15,16 +15,30 @@ class vending_machine_interface:
         self.logger.log_info("Start Vending Machine Info Log")
         self.logger.log_error("Start Vending Machine Error Log")
 
-    def create_vending_machine(self, vending_location, vending_address, vending_postal_code, vending_city, vending_country):
+    def create_vending_machine(self, vending_location, vending_address, vending_postal_code, vending_city,
+                               vending_country):
         # Method to create a new vending machine record in the database
         try:
             with self.connection.cursor() as cursor:
-                sql = ("INSERT INTO vending_machine (vd_vending_machine_location, vd_vending_machine_address, vd_vending_machine_postal_code, "
-                       "vd_vending_machine_city, vd_vending_machine_country) VALUES (%s, %s, %s, %s, %s)")
-                cursor.execute(sql, (vending_location, vending_address, vending_postal_code, vending_city, vending_country))
+                # Fetch the maximum existing vending machine ID
+                cursor.execute("SELECT COALESCE(MAX(vd_vending_machine_id), 0) AS max_id FROM vending_machine")
+                result = cursor.fetchone()
+                last_id = result['max_id']
+                new_id = last_id + 1
+
+                # SQL query to insert a new vending machine into the vending_machine table
+                sql = (
+                    "INSERT INTO vending_machine (vd_vending_machine_id, vd_vending_machine_location, vd_vending_machine_address, "
+                    "vd_vending_machine_postal_code, vd_vending_machine_city, vd_vending_machine_country) VALUES (%s, %s, %s, %s, %s, %s)")
+                cursor.execute(sql, (
+                new_id, vending_location, vending_address, vending_postal_code, vending_city, vending_country))
                 self.connection.commit()
+
+                # Log successful vending machine creation
                 self.logger.log_info(
-                    f"Machine created: (Vending location:{vending_location}), (Vending address: {vending_address}), (Vending postal code: {vending_postal_code}), (Vending city: {vending_city}), (Vending country: {vending_country}")
+                    f"Machine created: (Vending ID: {new_id}), (Vending location: {vending_location}), (Vending address: {vending_address}), "
+                    f"(Vending postal code: {vending_postal_code}), (Vending city: {vending_city}), (Vending country: {vending_country})"
+                )
             return True
         except pymysql.MySQLError as e:
             self.logger.log_error(f"Error creating vending machine: {e}")
