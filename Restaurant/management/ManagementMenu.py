@@ -10,19 +10,27 @@ from table_management import TableManagementWidget
 from Reservation_management import ReservationManagement
 
 ICON_FOLDER = "../Icons/"
+
 class DashboardWindow(QMainWindow):
     def __init__(self):
+        """
+        Initialize the DashboardWindow for managing various sections of the restaurant.
+        """
         super().__init__()
         self.setWindowTitle("Restaurant Management Dashboard")
         self.setGeometry(100, 100, 300, 400)
         self.initUI()
 
     def initUI(self):
+        """
+        Set up the main window's UI elements.
+        """
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         layout = QVBoxLayout(central_widget)
         layout.setAlignment(Qt.AlignCenter)
 
+        # Create and configure buttons for different management sections
         # user_management_button = QPushButton("User Management")
         # user_management_button.setFixedSize(200, 50)
         # user_management_button.clicked.connect(self.open_user_management)
@@ -48,29 +56,44 @@ class DashboardWindow(QMainWindow):
         reservation_management_button.clicked.connect(self.open_reservation_management)
         layout.addWidget(reservation_management_button)
 
+        # Set window icon
         icon_path = os.path.join(ICON_FOLDER, "favicon.png")
         self.setWindowIcon(QIcon(icon_path))
+
     # def open_user_management(self):
-    #     self.user_management_window = UserManagement()  # Assume you have a UserManagement class defined
+    #     """
+    #     Open the User Management window.
+    #     """
+    #     self.user_management_window = UserManagement()
     #     self.user_management_window.show()
 
     def open_menu_management(self):
-        self.menu_management_window = MenuManagement()  # Assume you have a MenuManagement class defined
+        """
+        Open the Menu Management window.
+        """
+        self.menu_management_window = MenuManagement()
         self.menu_management_window.show()
 
     def open_order_management(self):
-        self.order_management_window = OrderManagement()  # Assume you have an OrderManagement class defined
+        """
+        Open the Order Management window.
+        """
+        self.order_management_window = OrderManagement()
         self.order_management_window.show()
 
     def open_table_management(self):
-        self.table_management_window = TableManagementWidget()  # Assume you have a TableManagement class defined
+        """
+        Open the Table Management window.
+        """
+        self.table_management_window = TableManagementWidget()
         self.table_management_window.show()
 
     def open_reservation_management(self):
-        self.reservation_management_window = ReservationManagement()  # Assume you have a CustomerWindow class defined
+        """
+        Open the Reservation Management window.
+        """
+        self.reservation_management_window = ReservationManagement()
         self.reservation_management_window.show()
-
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

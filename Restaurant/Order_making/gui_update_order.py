@@ -1,8 +1,8 @@
 import sys
 import os
 from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QPushButton, QTableWidget, \
-    QTableWidgetItem, QSpinBox, QMessageBox, QGridLayout
+from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QHBoxLayout, QPushButton,
+                               QTableWidget, QTableWidgetItem, QSpinBox, QMessageBox, QGridLayout)
 from PySide6.QtCore import Signal, QDateTime
 from pymysql import connect, cursors
 from functools import partial
@@ -10,9 +10,13 @@ from functools import partial
 ICON_FOLDER = "../Icons/"
 
 class UpdateOrder(QMainWindow):
+    # Signal to indicate that the order has been updated
     orderUpdated = Signal()
 
     def __init__(self, connection, table_number, status):
+        """
+        Initialize the UpdateOrder window with the given database connection, table number, and status.
+        """
         super().__init__()
         self.setWindowTitle("Update Order")
         self.setGeometry(100, 100, 1200, 600)
@@ -23,6 +27,9 @@ class UpdateOrder(QMainWindow):
         self.initUI()
 
     def initUI(self):
+        """
+        Set up the main window's UI elements.
+        """
         widget = QWidget()
         layout = QHBoxLayout()
 
@@ -51,6 +58,9 @@ class UpdateOrder(QMainWindow):
         self.setWindowIcon(QIcon(icon_path))
 
     def display_categories(self):
+        """
+        Display menu categories as buttons.
+        """
         # Clear main layout before loading new items
         for i in reversed(range(self.main_layout.count())):
             self.main_layout.itemAt(i).widget().setParent(None)
@@ -59,17 +69,18 @@ class UpdateOrder(QMainWindow):
             with self.db_connection.cursor() as cursor:
                 cursor.execute("SELECT DISTINCT rs_category FROM menu_items")
                 categories = cursor.fetchall()
-                colors = ['#49AEE1', '#5EA508', '#95E534', '#DAF7A6', '#FFC300', '#B87060', '#FF5733', '#C70039',
-                          '#581845']  # List of different colors
+                colors = ['#49AEE1', '#5EA508', '#95E534', '#DAF7A6', '#FFC300', '#B87060', '#FF5733', '#C70039', '#581845']
                 for index, (category, color) in enumerate(zip(categories, colors)):
                     btn = QPushButton(category['rs_category'])
                     btn.setFixedSize(200, 50)
-                    btn.setStyleSheet(
-                        f"background-color: {color}; color: black; font-weight: bold;")  # Set background color
+                    btn.setStyleSheet(f"background-color: {color}; color: black; font-weight: bold;")
                     btn.clicked.connect(partial(self.load_items_by_category, category['rs_category'], clr=color))
                     self.main_layout.addWidget(btn, index, 0)
 
     def load_items_by_category(self, category, clr):
+        """
+        Load menu items for the selected category and display them as buttons.
+        """
         for i in reversed(range(self.main_layout.count())):
             self.main_layout.itemAt(i).widget().setParent(None)
 
@@ -89,6 +100,9 @@ class UpdateOrder(QMainWindow):
                     self.main_layout.addWidget(btn, index, 0)
 
     def select_and_load_existing_order(self):
+        """
+        Select and load the most recent existing order for the table.
+        """
         if self.db_connection:
             with self.db_connection.cursor() as cursor:
                 cursor.execute("SELECT rs_order_id FROM orders WHERE rs_table_number = %s AND rs_status = 'Placed'",
@@ -99,11 +113,17 @@ class UpdateOrder(QMainWindow):
                     self.load_existing_order_items()
 
     def load_existing_order_items(self):
+        """
+        Load existing items for the current order and add them to the order table.
+        """
         if self.current_order_id and self.db_connection:
             with self.db_connection.cursor() as cursor:
-                cursor.execute(
-                    "SELECT mi.rs_name, od.rs_quantity, mi.rs_price FROM orderdetails od JOIN menu_items mi ON od.rs_item_id = mi.rs_item_id WHERE od.rs_order_id = %s",
-                    (self.current_order_id,))
+                cursor.execute("""
+                    SELECT mi.rs_name, od.rs_quantity, mi.rs_price
+                    FROM orderdetails od
+                    JOIN menu_items mi ON od.rs_item_id = mi.rs_item_id
+                    WHERE od.rs_order_id = %s
+                """, (self.current_order_id,))
                 items = cursor.fetchall()
 
                 # Dictionary to consolidate items
@@ -122,6 +142,9 @@ class UpdateOrder(QMainWindow):
                     self.add_existing_item_to_order(item)
 
     def add_item_to_order(self, item):
+        """
+        Add a new item to the order table.
+        """
         row_count = self.order_items.rowCount()
         self.order_items.insertRow(row_count)
         self.order_items.setItem(row_count, 0, QTableWidgetItem(item['rs_name']))
@@ -136,6 +159,9 @@ class UpdateOrder(QMainWindow):
         quantity_spin_box.valueChanged.connect(partial(self.update_subtotal, row_count, quantity_spin_box))
 
     def add_existing_item_to_order(self, item):
+        """
+        Add an existing item to the order table.
+        """
         row_count = self.order_items.rowCount()
         self.order_items.insertRow(row_count)
         self.order_items.setItem(row_count, 0, QTableWidgetItem(item['rs_name']))
@@ -150,18 +176,21 @@ class UpdateOrder(QMainWindow):
         self.order_items.setItem(row_count, 3, QTableWidgetItem(f"{subtotal:.2f}"))
 
     def update_subtotal(self, row, spin_box, value):
-        # 'value' is the new value of the spin box, automatically passed by the valueChanged signal
+        """
+        Update the subtotal when the quantity changes.
+        """
         price = float(self.order_items.item(row, 2).text())
         subtotal = value * price  # Use 'value', which is the new spin box value
         self.order_items.setItem(row, 3, QTableWidgetItem(f"{subtotal:.2f}"))
 
     def update_order_prompt(self):
-        # Check if there are items in the order
+        """
+        Display a confirmation prompt before updating the order.
+        """
         if self.order_items.rowCount() == 0:
             QMessageBox.warning(self, "Empty Order", "Please add items to the order before updating it.")
             return
 
-        # Display a dialog for confirmation
         msgBox = QMessageBox()
         msgBox.setText("Are you sure you want to update the order?")
         msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
@@ -171,6 +200,9 @@ class UpdateOrder(QMainWindow):
             self.update_order()
 
     def update_order(self):
+        """
+        Update the order and save changes to the database.
+        """
         if not self.current_order_id:
             QMessageBox.warning(self, "Order Error", "No existing order to update.")
             return
@@ -195,7 +227,6 @@ class UpdateOrder(QMainWindow):
         except Exception as e:
             self.db_connection.rollback()
             QMessageBox.warning(self, "Database Error", f"An error occurred while updating the order: {e}")
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

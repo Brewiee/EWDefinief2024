@@ -8,7 +8,6 @@ from pymysql import connect, cursors
 from fpdf import FPDF
 from datetime import datetime
 
-
 ICON_FOLDER = "../Icons/"
 TAX = 0.15
 
@@ -17,6 +16,9 @@ class ViewOrderToClose(QMainWindow):
     about_to_close = Signal()
 
     def __init__(self, connection, table_number, status):
+        """
+        Initialize the window with the given database connection, table number, and status.
+        """
         super().__init__()
         self.db_connection = connection
         self.table_number = table_number
@@ -27,6 +29,9 @@ class ViewOrderToClose(QMainWindow):
         self.view_order()
 
     def initUI(self):
+        """
+        Set up the main window's UI elements.
+        """
         widget = QWidget()
         layout = QVBoxLayout()
 
@@ -35,6 +40,7 @@ class ViewOrderToClose(QMainWindow):
         self.order_view.setModel(self.order_model)
         self.order_model.setHorizontalHeaderLabels(["Name", "Amount", "Price", "Subtotal"])
 
+        # Set column widths
         self.order_view.setColumnWidth(0, 350)  # Name column
         self.order_view.setColumnWidth(1, 100)  # Amount column
         self.order_view.setColumnWidth(2, 100)  # Price column
@@ -56,13 +62,18 @@ class ViewOrderToClose(QMainWindow):
 
         widget.setLayout(layout)
         self.setCentralWidget(widget)
+
+        # Set window icon
         icon_path = os.path.join(ICON_FOLDER, "favicon.png")
         self.setWindowIcon(QIcon(icon_path))
 
     def view_order(self):
+        """
+        Fetch and display the current order details for the table.
+        """
         try:
             with self.db_connection.cursor() as cursor:
-                # First, let's get the latest OrderID for the given table number where the table status is 'occupied'
+                # Get the latest OrderID for the given table number where the table status is 'occupied'
                 cursor.execute("""
                     SELECT o.rs_order_id
                     FROM orders o
@@ -74,7 +85,7 @@ class ViewOrderToClose(QMainWindow):
                 result = cursor.fetchone()
                 if result:
                     latest_order_id = result['rs_order_id']
-                    # Now we get the items for that order
+                    # Now get the items for that order
                     cursor.execute("""
                         SELECT mi.rs_name, od.rs_quantity, mi.rs_price, (od.rs_quantity * mi.rs_price) AS Subtotal
                         FROM orderdetails od
@@ -88,16 +99,17 @@ class ViewOrderToClose(QMainWindow):
                         row = [QStandardItem(str(value)) for value in item.values()]
                         self.order_model.appendRow(row)
                         total_before_tax += item['Subtotal']
-                        self.total_before_tax_label.setText(f"Total before tax: Eur {float(total_before_tax):.2f}")
-                        self.total_after_tax_label.setText(
-                            f"Total after tax: Eur {float(total_before_tax) * (1 + TAX):.2f}")
-
+                    self.total_before_tax_label.setText(f"Total before tax: EUR {float(total_before_tax):.2f}")
+                    self.total_after_tax_label.setText(f"Total after tax: EUR {float(total_before_tax) * (1 + TAX):.2f}")
                 else:
                     QMessageBox.information(self, "No Orders", "No orders found for the selected table.")
         except Exception as e:
             QMessageBox.warning(self, "Database Error", f"An error occurred while fetching order details: {e}")
 
     def close_order(self):
+        """
+        Handle the closing of the order, updating the database and generating a PDF receipt.
+        """
         confirmation = QMessageBox.question(self, "Confirm Close Order", "Are you sure you want to close this order?",
                                             QMessageBox.Yes | QMessageBox.No)
         if confirmation == QMessageBox.Yes:
@@ -140,10 +152,10 @@ class ViewOrderToClose(QMainWindow):
                 self.db_connection.rollback()
             self.close()
 
-
-
     def print_order_to_pdf(self):
-
+        """
+        Generate a PDF receipt for the order.
+        """
         try:
             # Get current month name and year
             current_month_year = datetime.now().strftime("%B_%Y")
@@ -153,7 +165,6 @@ class ViewOrderToClose(QMainWindow):
             unique_id = str(uuid.uuid4().hex)[:8]  # Get the first 8 characters of a UUID
             # Construct the directory name
             directory_name = f"..\\receipts_{current_month_year}"
-
 
             # Construct the filename with the unique identifier
             date_directory = os.path.join(directory_name, current_date)
@@ -165,7 +176,6 @@ class ViewOrderToClose(QMainWindow):
 
             if not os.path.exists(date_directory):
                 os.makedirs(date_directory)
-
 
             # Combine similar items
             combined_items = {}
@@ -204,12 +214,13 @@ class ViewOrderToClose(QMainWindow):
 
             total_after_tax = total_before_tax * (1 + TAX)
             pdf.cell(200, 10, txt="", ln=True)  # Add an empty line
-            pdf.cell(200, 10, txt=f"Total before tax: EUR {total_before_tax:.2f}", ln=True, align="R", border= True)
-            pdf.cell(200, 10, txt=f"Tax (21%): EUR {total_before_tax * TAX:.2f}", ln=True, align="R", border= True)
-            pdf.cell(200, 10, txt=f"Total after tax: EUR {total_after_tax:.2f}", ln=True, align="R", border= True)
+            pdf.cell(200, 10, txt=f"Total before tax: EUR {total_before_tax:.2f}", ln=True, align="R", border=True)
+            pdf.cell(200, 10, txt=f"Tax (21%): EUR {total_before_tax * TAX:.2f}", ln=True, align="R", border=True)
+            pdf.cell(200, 10, txt=f"Total after tax: EUR {total_after_tax:.2f}", ln=True, align="R", border=True)
 
             pdf.output(filename)
 
             QMessageBox.information(self, "PDF Saved", f"Order details saved to {filename}")
         except Exception as e:
             QMessageBox.warning(self, "PDF Error", f"An error occurred while printing order details to PDF: {e}")
+

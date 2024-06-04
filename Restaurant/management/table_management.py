@@ -9,6 +9,9 @@ ICON_FOLDER = "../Icons/"
 
 class TableManagementWidget(QWidget):
     def __init__(self):
+        """
+        Initialize the TableManagementWidget for managing restaurant tables.
+        """
         super().__init__()
         self.setWindowTitle("Table Management")
         self.setGeometry(100, 100, 950, 600)
@@ -19,10 +22,16 @@ class TableManagementWidget(QWidget):
         self.setWindowIcon(QIcon(icon_path))
 
     def create_db_connection(self):
+        """
+        Create and return a database connection.
+        """
         return connect(host='localhost', user='dbadmin', password='dbadmin', database='restaurant',
                        cursorclass=cursors.DictCursor)
 
     def initUI(self):
+        """
+        Set up the main window's UI elements.
+        """
         self.layout = QVBoxLayout()
 
         self.table_widget = QTableWidget()
@@ -54,6 +63,9 @@ class TableManagementWidget(QWidget):
         self.setLayout(self.layout)
 
     def load_tables(self):
+        """
+        Load tables from the database and display them in the table widget.
+        """
         self.table_widget.setRowCount(0)
         try:
             with self.db_connection.cursor() as cursor:
@@ -64,21 +76,29 @@ class TableManagementWidget(QWidget):
                         self.table_widget.setItem(row_number, column_number, QTableWidgetItem(str(data)))
                     self.table_widget.setCellWidget(row_number, 4, self.create_update_button(row_data['rs_table_id']))
                     self.table_widget.setCellWidget(row_number, 5, self.create_delete_button(row_data['rs_table_id']))
-
         except Exception as e:
             QMessageBox.warning(self, "Database Error", f"An error occurred: {e}")
 
     def create_update_button(self, tableID):
+        """
+        Create an update button for a table row.
+        """
         btn_update = QPushButton('Update')
         btn_update.clicked.connect(lambda: self.open_update_dialog(tableID))
         return btn_update
 
     def create_delete_button(self, tableID):
+        """
+        Create a delete button for a table row.
+        """
         btn_delete = QPushButton('Delete')
         btn_delete.clicked.connect(lambda: self.delete_table(tableID))
         return btn_delete
 
     def add_table(self):
+        """
+        Add a new table to the database.
+        """
         number = self.number_input.text()
         seats = self.seats_input.text()
         status = self.status_input.currentText()
@@ -112,6 +132,9 @@ class TableManagementWidget(QWidget):
             QMessageBox.information(self, "Cancelled", "Table addition cancelled.")
 
     def delete_table(self, tableID):
+        """
+        Delete a table from the database.
+        """
         confirmation = QMessageBox.question(self, "Confirm Deletion",
                                             "Are you sure you want to delete this table?",
                                             QMessageBox.Yes | QMessageBox.No)
@@ -128,6 +151,9 @@ class TableManagementWidget(QWidget):
             QMessageBox.information(self, "Cancelled", "Table deletion cancelled.")
 
     def open_update_dialog(self, tableID):
+        """
+        Open the update dialog for a table.
+        """
         dialog = EditTableDialog(tableID, self.db_connection)
         dialog.exec_()
         self.load_tables()
@@ -135,6 +161,9 @@ class TableManagementWidget(QWidget):
 
 class EditTableDialog(QDialog):
     def __init__(self, tableID, db_connection, parent=None):
+        """
+        Initialize the EditTableDialog for updating table details.
+        """
         super().__init__(parent)
         self.tableID = tableID
         self.db_connection = db_connection
@@ -144,6 +173,9 @@ class EditTableDialog(QDialog):
         self.load_table_data()
 
     def initUI(self):
+        """
+        Set up the dialog's UI elements.
+        """
         layout = QVBoxLayout(self)
         form_layout = QFormLayout()
 
@@ -163,6 +195,9 @@ class EditTableDialog(QDialog):
         layout.addWidget(self.update_button)
 
     def load_table_data(self):
+        """
+        Load existing data for the table into the dialog's fields.
+        """
         try:
             with self.db_connection.cursor() as cursor:
                 cursor.execute("SELECT rs_number, rs_seats, rs_status FROM tables WHERE rs_table_id = %s", (self.tableID,))
@@ -178,6 +213,9 @@ class EditTableDialog(QDialog):
             QMessageBox.warning(self, "Error", f"Failed to load table data: {e}")
 
     def update_table(self):
+        """
+        Update the table details in the database.
+        """
         number = self.number_input.text()
         seats = self.seats_input.text()
         status = self.status_input.currentText()  # Get the selected text from the combobox

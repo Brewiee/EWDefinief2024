@@ -1,11 +1,12 @@
+import sys
+import os
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit, QLabel,
                                QTableWidget, QTableWidgetItem, QMessageBox, QDialog, QComboBox, QCalendarWidget, QDialogButtonBox)
 from PySide6.QtCore import QTimer, Signal
 from pymysql import connect, cursors
-from datetime import datetime, date
+from datetime import datetime
 from Make_Reservations import CustomerWindow
-import os
-from PySide6.QtGui import QIcon
 
 ICON_FOLDER = "../Icons/"
 
@@ -13,9 +14,14 @@ class UpdateReservationDialog(QDialog):
     dialogClosed = Signal()
 
     def __init__(self, reservation_data, db_connection, parent=None):
+        """
+        Initialize the UpdateReservationDialog with the given reservation data and database connection.
+        """
         super().__init__(parent)
         self.setWindowTitle("Update Reservation")
         self.db_connection = db_connection
+        self.reservation_id = reservation_data['rs_reservation_id']
+
         self.layout = QVBoxLayout()
 
         self.customer_name_edit = QLineEdit()
@@ -23,7 +29,6 @@ class UpdateReservationDialog(QDialog):
         self.reservation_time_combo = QComboBox()
         self.party_size_edit = QLineEdit()
         self.table_number_combo = QComboBox()
-        self.reservation_id = None
 
         self.update_reservation_button = QPushButton("Update Reservation")
         self.update_reservation_button.clicked.connect(self.confirm_update_reservation)
@@ -31,6 +36,7 @@ class UpdateReservationDialog(QDialog):
         self.exit_button = QPushButton("Exit")
         self.exit_button.clicked.connect(self.close_dialog)
 
+        # Adding widgets to the layout
         self.layout.addWidget(QLabel("Customer Name:"))
         self.layout.addWidget(self.customer_name_edit)
         self.layout.addWidget(QLabel("Reservation Date:"))
@@ -52,14 +58,17 @@ class UpdateReservationDialog(QDialog):
         self.layout.addWidget(self.exit_button)
 
         self.setLayout(self.layout)
-
         self.load_reservation_data(reservation_data)
 
         self.table_number_combo.currentIndexChanged.connect(self.update_table_id_and_seats_label)
+
         icon_path = os.path.join(ICON_FOLDER, "favicon.png")
         self.setWindowIcon(QIcon(icon_path))
+
     def load_reservation_data(self, reservation_data):
-        self.reservation_id = reservation_data['rs_reservation_id']
+        """
+        Load the reservation data into the dialog fields.
+        """
         self.customer_name_edit.setText(reservation_data['rs_name'])
         self.reservation_date_calendar.setSelectedDate(reservation_data['rs_reservation_date'])
         time = reservation_data['rs_reservation_time'].seconds // 3600, reservation_data['rs_reservation_time'].seconds // 60 % 60
@@ -68,6 +77,9 @@ class UpdateReservationDialog(QDialog):
         self.populate_table_number_combo(reservation_data['rs_table_id'])
 
     def populate_reservation_time_combo(self, selected_time):
+        """
+        Populate the reservation time combo box.
+        """
         self.reservation_time_combo.clear()
         for hour in range(17, 24):
             for minute in range(0, 60, 15):
@@ -75,6 +87,9 @@ class UpdateReservationDialog(QDialog):
         self.reservation_time_combo.setCurrentText(selected_time)
 
     def populate_table_number_combo(self, selected_table_id):
+        """
+        Populate the table number combo box.
+        """
         self.table_number_combo.clear()
         try:
             with self.db_connection.cursor() as cursor:
@@ -87,6 +102,9 @@ class UpdateReservationDialog(QDialog):
         self.table_number_combo.setCurrentIndex(self.table_number_combo.findData(selected_table_id))
 
     def confirm_update_reservation(self):
+        """
+        Confirm the update reservation action.
+        """
         confirm_dialog = QMessageBox()
         confirm_dialog.setIcon(QMessageBox.Question)
         confirm_dialog.setText("Are you sure you want to update the reservation?")
@@ -96,11 +114,16 @@ class UpdateReservationDialog(QDialog):
         confirm_dialog.exec()
 
     def update_reservation_on_confirm(self, button):
-        button_answer = button.text()
-        if button_answer == "&Yes":
+        """
+        Update the reservation if the confirmation is yes.
+        """
+        if button.text() == "&Yes":
             self.update_reservation()
 
     def update_reservation(self):
+        """
+        Update the reservation in the database.
+        """
         selected_table_id = self.table_number_combo.currentData()
         if selected_table_id is None:
             QMessageBox.warning(self, "Input Error", "Please select a table number.")
@@ -145,10 +168,16 @@ class UpdateReservationDialog(QDialog):
             QMessageBox.warning(self, "Database Error", f"An error occurred: {e}")
 
     def close_dialog(self):
+        """
+        Close the dialog.
+        """
         self.close()
         self.dialogClosed.emit()
 
     def update_table_id_and_seats_label(self, index):
+        """
+        Update the table ID and seats label when a new table is selected.
+        """
         if index >= 0:
             table_id = self.table_number_combo.itemData(index)
             if table_id is not None:
@@ -175,8 +204,12 @@ class UpdateReservationDialog(QDialog):
 
 class DateSelectionDialog(QDialog):
     def __init__(self, parent=None):
+        """
+        Initialize the DateSelectionDialog for selecting a reservation date.
+        """
         super().__init__(parent)
         self.setWindowTitle("Select Reservation Date")
+
         self.layout = QVBoxLayout()
         self.calendar = QCalendarWidget()
         self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
@@ -188,10 +221,16 @@ class DateSelectionDialog(QDialog):
         self.setLayout(self.layout)
 
     def get_selected_date(self):
+        """
+        Get the selected date from the calendar.
+        """
         return self.calendar.selectedDate().toString("yyyy-MM-dd")
 
 class ReservationManagement(QWidget):
     def __init__(self):
+        """
+        Initialize the ReservationManagement window for managing reservations.
+        """
         super().__init__()
         self.setWindowTitle("Reservation Management")
         self.setGeometry(100, 100, 950, 600)
@@ -203,10 +242,16 @@ class ReservationManagement(QWidget):
             self.add_reservation_window = None
 
     def create_db_connection(self):
+        """
+        Create and return a database connection.
+        """
         return connect(host='localhost', user='dbadmin', password='dbadmin', database='restaurant',
                        cursorclass=cursors.DictCursor)
 
     def get_reservation_date(self):
+        """
+        Get the reservation date from the user.
+        """
         dialog = DateSelectionDialog(self)
         if dialog.exec() == QDialog.Accepted:
             return dialog.get_selected_date()
@@ -216,6 +261,9 @@ class ReservationManagement(QWidget):
             return None
 
     def initUI(self):
+        """
+        Set up the main window's UI elements.
+        """
         self.layout = QVBoxLayout()
         self.table = QTableWidget()
         self.table.setColumnCount(8)
@@ -235,6 +283,9 @@ class ReservationManagement(QWidget):
         self.refresh_timer.start(1000)
 
     def load_reservations(self):
+        """
+        Load reservations from the database and display them in the table.
+        """
         self.table.setRowCount(0)
         try:
             with self.db_connection.cursor() as cursor:
@@ -252,16 +303,25 @@ class ReservationManagement(QWidget):
             QMessageBox.warning(self, "Database Error", f"An error occurred: {e}")
 
     def create_update_button(self, reservation_data):
+        """
+        Create an update button for a table row.
+        """
         btn_update = QPushButton('Update')
         btn_update.clicked.connect(lambda: self.open_update_reservation_dialog(reservation_data))
         return btn_update
 
     def create_delete_button(self, reservation_id):
+        """
+        Create a delete button for a table row.
+        """
         btn_delete = QPushButton('Delete')
         btn_delete.clicked.connect(lambda: self.confirm_delete_reservation(reservation_id))
         return btn_delete
 
     def confirm_delete_reservation(self, reservation_id):
+        """
+        Confirm the deletion of a reservation.
+        """
         confirm_dialog = QMessageBox()
         confirm_dialog.setIcon(QMessageBox.Question)
         confirm_dialog.setText("Are you sure you want to delete the reservation?")
@@ -271,6 +331,9 @@ class ReservationManagement(QWidget):
         confirm_dialog.exec()
 
     def delete_reservation(self, reservation_id, button):
+        """
+        Delete the reservation from the database.
+        """
         if button.text() == "&Yes":
             try:
                 with self.db_connection.cursor() as cursor:
@@ -282,11 +345,17 @@ class ReservationManagement(QWidget):
                 QMessageBox.warning(self, "Database Error", f"An error occurred: {e}")
 
     def open_update_reservation_dialog(self, reservation_data):
+        """
+        Open the update reservation dialog.
+        """
         dialog = UpdateReservationDialog(reservation_data, self.db_connection, self)
         dialog.dialogClosed.connect(self.load_reservations)
         dialog.exec()
 
     def add_reservation(self):
+        """
+        Open the add reservation window.
+        """
         if not self.add_reservation_window:
             self.add_reservation_window = CustomerWindow()
         self.add_reservation_window.show()

@@ -8,9 +8,11 @@ from pymysql import connect, cursors
 
 ICON_FOLDER = "../Icons/"
 
-
 class OrderManagement(QWidget):
     def __init__(self):
+        """
+        Initialize the OrderManagement window for managing orders.
+        """
         super().__init__()
         self.setWindowTitle("Order Management")
         self.setGeometry(100, 100, 1200, 600)
@@ -19,10 +21,16 @@ class OrderManagement(QWidget):
         self.load_orders()
 
     def create_db_connection(self):
+        """
+        Create and return a database connection.
+        """
         return connect(host='localhost', user='dbadmin', password='dbadmin', database='restaurant',
                        cursorclass=cursors.DictCursor)
 
     def initUI(self):
+        """
+        Set up the main window's UI elements.
+        """
         self.layout = QVBoxLayout()
         self.table = QTableWidget()
         self.table.setColumnCount(6)
@@ -33,6 +41,9 @@ class OrderManagement(QWidget):
         self.setWindowIcon(QIcon(icon_path))
 
     def load_orders(self):
+        """
+        Load orders from the database and display them in the table.
+        """
         self.table.setRowCount(0)
         try:
             with self.db_connection.cursor() as cursor:
@@ -47,16 +58,25 @@ class OrderManagement(QWidget):
             QMessageBox.warning(self, "Database Error", f"An error occurred: {e}")
 
     def create_update_button(self, orderID):
+        """
+        Create an update button for a table row.
+        """
         btn_update = QPushButton('Update')
         btn_update.clicked.connect(lambda: self.open_update_order_dialog(orderID))
         return btn_update
 
     def create_delete_button(self, orderID):
+        """
+        Create a delete button for a table row.
+        """
         btn_delete = QPushButton('Delete')
         btn_delete.clicked.connect(lambda: self.delete_order(orderID))
         return btn_delete
 
     def delete_order(self, orderID):
+        """
+        Delete an order from the database.
+        """
         confirmation = QMessageBox.question(self, "Confirm Deletion",
                                             "Are you sure you want to delete this order and all of its details?",
                                             QMessageBox.Yes | QMessageBox.No)
@@ -74,6 +94,9 @@ class OrderManagement(QWidget):
             QMessageBox.information(self, "Cancelled", "Order deletion cancelled.")
 
     def open_update_order_dialog(self, orderID):
+        """
+        Open the update dialog for an order.
+        """
         dialog = UpdateOrderDialog(orderID, self.db_connection, self)
         dialog.exec()
         self.load_orders()
@@ -81,6 +104,9 @@ class OrderManagement(QWidget):
 
 class UpdateOrderDialog(QDialog):
     def __init__(self, orderID, db_connection, parent=None):
+        """
+        Initialize the UpdateOrderDialog for updating an order.
+        """
         super().__init__(parent)
         self.orderID = orderID
         self.db_connection = db_connection
@@ -89,6 +115,9 @@ class UpdateOrderDialog(QDialog):
         self.initUI()
 
     def initUI(self):
+        """
+        Set up the dialog's UI elements.
+        """
         layout = QVBoxLayout(self)
         form_layout = QFormLayout()
 
@@ -108,6 +137,9 @@ class UpdateOrderDialog(QDialog):
         self.load_order_data()
 
     def load_order_data(self):
+        """
+        Load existing data for the order into the dialog's fields.
+        """
         try:
             with self.db_connection.cursor() as cursor:
                 cursor.execute("SELECT rs_table_number, rs_status FROM orders WHERE rs_order_id = %s", (self.orderID,))
@@ -119,6 +151,9 @@ class UpdateOrderDialog(QDialog):
             QMessageBox.warning(self, "Error", f"Failed to load order data: {e}")
 
     def update_order(self):
+        """
+        Update the order in the database.
+        """
         tableNumber = self.table_number_input.text()
         status = self.status_input.currentText()
 

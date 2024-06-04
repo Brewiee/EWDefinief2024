@@ -12,6 +12,9 @@ ITEMS = ["Our Famous", "Greek Burgers", "Loaded Fries", "For the Team", "Kids me
 
 class MenuManagement(QWidget):
     def __init__(self):
+        """
+        Initialize the MenuManagement window for managing menu items.
+        """
         super().__init__()
         self.setWindowTitle("Menu Management")
         self.setGeometry(100, 100, 1000, 600)
@@ -20,10 +23,16 @@ class MenuManagement(QWidget):
         self.load_menu_items()
 
     def create_db_connection(self):
+        """
+        Create and return a database connection.
+        """
         return connect(host='localhost', user='dbadmin', password='dbadmin', database='restaurant',
                        cursorclass=cursors.DictCursor)
 
     def initUI(self):
+        """
+        Set up the main window's UI elements.
+        """
         self.layout = QVBoxLayout()
         self.table = QTableWidget()
         self.table.setColumnCount(7)  # Columns for ItemID, Name, Description, Price, Category, Update, Delete
@@ -59,6 +68,9 @@ class MenuManagement(QWidget):
         self.setWindowIcon(QIcon(icon_path))
 
     def load_menu_items(self):
+        """
+        Load menu items from the database and display them in the table.
+        """
         self.table.setRowCount(0)
         try:
             with self.db_connection.cursor() as cursor:
@@ -82,22 +94,34 @@ class MenuManagement(QWidget):
             print(e)
 
     def create_update_button(self, itemID):
+        """
+        Create an update button for a table row.
+        """
         btn_update = QPushButton('Update')
         btn_update.clicked.connect(lambda: self.open_update_dialog(itemID))
         return btn_update
 
     def create_delete_button(self, itemID):
+        """
+        Create a delete button for a table row.
+        """
         btn_delete = QPushButton('Delete')
         btn_delete.clicked.connect(lambda: self.confirm_delete_menu_item(itemID))  # Connect to confirmation method
         return btn_delete
 
     def confirm_delete_menu_item(self, itemID):
+        """
+        Confirm deletion of a menu item.
+        """
         confirmation = QMessageBox.question(self, "Confirm Delete", "Are you sure you want to delete this menu item?",
                                             QMessageBox.Yes | QMessageBox.No)
         if confirmation == QMessageBox.Yes:
             self.delete_menu_item(itemID)
 
     def add_menu_item(self):
+        """
+        Add a new menu item to the database.
+        """
         name = self.name_input.text()
         description = self.description_input.toPlainText()
         price = self.price_input.text()
@@ -139,6 +163,9 @@ class MenuManagement(QWidget):
             QMessageBox.information(self, "Cancelled", "Menu item addition cancelled.")
 
     def delete_menu_item(self, itemID):
+        """
+        Delete a menu item from the database.
+        """
         try:
             with self.db_connection.cursor() as cursor:
                 cursor.execute("DELETE FROM menu_items WHERE rs_item_id = %s", (int(itemID),))
@@ -149,12 +176,18 @@ class MenuManagement(QWidget):
             QMessageBox.warning(self, "Database Error", f"An error occurred: {e}")
 
     def open_update_dialog(self, itemID):
+        """
+        Open the update dialog for a menu item.
+        """
         dialog = UpdateMenuDialog(itemID, self.db_connection, self)
         if dialog.exec_():  # Check if dialog was accepted (menu item was updated)
             self.load_menu_items()  # Reload menu items
 
 class UpdateMenuDialog(QDialog):
     def __init__(self, itemID, db_connection, parent=None):
+        """
+        Initialize the UpdateMenuDialog for updating a menu item.
+        """
         super().__init__(parent)
         self.itemID = itemID
         self.db_connection = db_connection
@@ -163,6 +196,9 @@ class UpdateMenuDialog(QDialog):
         self.initUI()
 
     def initUI(self):
+        """
+        Set up the dialog's UI elements.
+        """
         layout = QVBoxLayout(self)
         form_layout = QFormLayout()
 
@@ -186,6 +222,9 @@ class UpdateMenuDialog(QDialog):
         self.load_menu_item_data()
 
     def load_menu_item_data(self):
+        """
+        Load existing data for the menu item into the dialog's fields.
+        """
         try:
             with self.db_connection.cursor() as cursor:
                 cursor.execute("SELECT rs_name, rs_description, rs_price, rs_category FROM menu_items WHERE rs_item_id = %s", (self.itemID,))
@@ -201,6 +240,9 @@ class UpdateMenuDialog(QDialog):
             QMessageBox.warning(self, "Error", f"Failed to load menu item data: {e}")
 
     def update_menu_item(self):
+        """
+        Update the menu item in the database.
+        """
         name = self.name_input.text()
         description = self.description_input.toPlainText()
         price = self.price_input.text()
