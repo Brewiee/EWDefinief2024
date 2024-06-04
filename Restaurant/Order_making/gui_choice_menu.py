@@ -105,7 +105,6 @@ class MainMenu(QMainWindow):
 
 
     def create_order(self):
-        print(f"this is create order user{self.user}")
         self.order_creation = CreateOrder(connection=self.db_connection, table_number=self.table_number, status=self.status, user = self.user)
         self.order_creation.about_to_close.connect(self.close_menu)
         self.order_creation.show()
@@ -113,7 +112,6 @@ class MainMenu(QMainWindow):
 
 
     def close_order(self):
-        print(self.table_number)
         self.order_closing = ViewOrderToClose(connection=self.db_connection, table_number=self.table_number, status=self.status)
         # Connect the about_to_close signal to the close_menu method
         self.order_closing.about_to_close.connect(self.close_menu)

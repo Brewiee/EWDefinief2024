@@ -107,12 +107,9 @@ class TableSelectionWindow(QMainWindow):
 
     def create_click_handler(self, table_number, status):
         """Handle button click"""
-        # print(f"Table {table_number} selected with status {status}")
         self.option_choice(table_number, status)
 
     def option_choice(self, table_number, status):
-        print(f"this is gui_table user:{self.user}")
-        # self.hide()
         self.choice_menu = MainMenu(db_connection=self.db_connection, table_number=table_number, status=status, user1 = self.user)
         self.choice_menu.about_to_close.connect(self.refresh_table_status)
         # Connect the about_to_close signal of choice_menu to refresh_table_status

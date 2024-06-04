@@ -67,7 +67,6 @@ class ViewOrder(QMainWindow):
                     LIMIT 1
                 """, (table_number,))
                 result = cursor.fetchone()
-                print(result)
                 if result:
                     latest_order_id = result['rs_order_id']
                     # Now we get the items for that order
