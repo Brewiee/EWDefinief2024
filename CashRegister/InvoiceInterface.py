@@ -1,5 +1,8 @@
 import textwrap
-
+import pymysql
+import datetime
+import os
+import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget, QPushButton, QTableWidget, \
     QTableWidgetItem, QLabel, QLineEdit, QMessageBox, QCompleter, QCheckBox, QDialog, QPlainTextEdit
 from PySide6.QtGui import QColor, QPalette, QPixmap
@@ -8,10 +11,6 @@ from pymysql.cursors import DictCursor
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from CreatePostalcode import AddPostalCodeDialog
-import pymysql
-import datetime
-import os
-import sys
 
 # Variables
 ICON_FOLDER = "../Icons/"
@@ -46,6 +45,9 @@ class InvoiceManagementApp(QMainWindow):
 
         # Dictionary to temporarily store additional details
         self.additional_details_dict = {}
+
+        # Dictionary to track temporary stock quantities
+        self.temporary_stock = {}
 
     def init_ui(self):
         # Initialize layout
@@ -370,7 +372,7 @@ class InvoiceManagementApp(QMainWindow):
                     return line_edit.text()
         return ""
 
-    def update_product_completer(self):
+    def update_product_completer(self, sold_product_id=None, sold_quantity=0):
         try:
             with self.conn.cursor() as cursor:
                 query = """
@@ -383,6 +385,13 @@ class InvoiceManagementApp(QMainWindow):
                 """
                 cursor.execute(query)
                 products = cursor.fetchall()
+
+                # Adjust the stock quantities based on sold product
+                if sold_product_id and sold_quantity:
+                    for product in products:
+                        if product['CR_Product_Product_ID'] == sold_product_id:
+                            product['CR_Product_Stock_quantity'] -= sold_quantity
+
                 product_info_list = [
                     f"{product['CR_Product_Product_ID']} - {product['CR_Product_ProductCode']} - "
                     f"{product['CR_Product_Name']} - {product['CR_Product_Price_S']} - "
@@ -488,15 +497,20 @@ class InvoiceManagementApp(QMainWindow):
             self.quantity_input.clear()
             self.vat_input.setText("21")
 
+            # Track the quantity and update stock temporarily
+            self.update_stock_temporary(product_id, quantity)
+
             # Calculate and update total amount
             self.calculate_total()
 
         except (ValueError, pymysql.Error) as e:
             QMessageBox.warning(self, "Error", f"Error adding product to invoice: {str(e)}")
 
+    def update_stock_temporary(self, product_id, quantity):
+        self.update_product_completer(product_id, quantity)
+
     def get_product_stock(self, product_id):
         try:
-            # Assuming you have a database connection named 'db'
             with self.conn.cursor() as cursor:
                 cursor.execute("SELECT CR_Product_Stock_quantity FROM Product WHERE CR_Product_Product_ID = %s", (product_id,))
                 result = cursor.fetchone()
