@@ -8,7 +8,7 @@ from gui_choice_menu import MainMenu
 
 # Constants for user and icon folder path
 USER = 1
-ICON_FOLDER = "../Icons/"
+ICON_FOLDER = "../../Icons/"
 
 def connect_to_database():
     """

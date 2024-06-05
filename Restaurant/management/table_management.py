@@ -5,7 +5,7 @@ from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout, 
                                QTableWidget, QTableWidgetItem, QMessageBox, QDialog, QFormLayout, QComboBox)
 from pymysql import connect, cursors
 
-ICON_FOLDER = "../Icons/"
+ICON_FOLDER = "../../Icons/"
 
 class TableManagementWidget(QWidget):
     def __init__(self):

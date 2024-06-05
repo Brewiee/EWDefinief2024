@@ -9,7 +9,7 @@ from gui_close_order import ViewOrderToClose
 from gui_update_order import UpdateOrder
 from gui_lock_table import LockTheTable, UnlockTheTable
 
-ICON_FOLDER = "../Icons/"
+ICON_FOLDER = "../../Icons/"
 
 class MainMenu(QMainWindow):
     # Define a custom signal

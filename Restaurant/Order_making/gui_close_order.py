@@ -8,7 +8,7 @@ from pymysql import connect, cursors
 from fpdf import FPDF
 from datetime import datetime
 
-ICON_FOLDER = "../Icons/"
+ICON_FOLDER = "../../Icons/"
 TAX = 0.15
 
 class ViewOrderToClose(QMainWindow):

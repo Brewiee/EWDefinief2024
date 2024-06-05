@@ -42,28 +42,26 @@ INSERT INTO menu_items (rs_item_id, rs_name, rs_description, rs_price, rs_catego
 INSERT INTO menu_items (rs_item_id, rs_name, rs_description, rs_price, rs_category) VALUES(51, "PAIDAKIA", "Lamb chops with fried vegetables and Feta topping and fries", 21.50, "Traditionals");
 INSERT INTO menu_items (rs_item_id, rs_name, rs_description, rs_price, rs_category) VALUES(52, "METAXA GYROS", "Gyros in creamy Metaxa sauce with cheese on top in the oven, comes with fries, rice or kale salad", 15.90, "Traditionals");
 -- Dummy data for table table
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(1, 101, 4, 'available');
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(2, 102, 2, 'occupied');
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(3, 103, 6, 'available');
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(4, 104, 4, 'available');
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(5, 105, 2, 'available');
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(6, 106, 6, 'occupied');
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(7, 107, 4, 'available');
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(8, 108, 2, 'available');
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(9, 109, 6, 'available');
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(10, 110, 4, 'available');
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(11, 111, 2, 'available');
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(12, 112, 6, 'available');
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(13, 113, 4, 'occupied');
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(14, 114, 2, 'available');
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(15, 115, 6, 'available');
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(16, 116, 4, 'available');
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(17, 117, 2, 'occupied');
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(18, 118, 6, 'available');
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(19, 119, 4, 'available');
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(20, 120, 2, 'available');
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(21, 121, 6, 'available');
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(22, 122, 4, 'available');
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(23, 123, 2, 'available');
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(24, 124, 6, 'available');
-INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(25, 125, 4, 'available');
+INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(1, 101, 2, 'available');
+INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(2, 102, 2, 'available');
+INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(3, 103, 2, 'available');
+INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(4, 104, 2, 'available');
+INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(5, 201, 4, 'available');
+INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(6, 202, 4, 'available');
+INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(7, 203, 4, 'available');
+INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(8, 204, 4, 'available');
+INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(9, 301, 6, 'available');
+INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(10, 302, 6, 'available');
+INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(11, 303, 6, 'available');
+INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(12, 304, 6, 'available');
+INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(13, 401, 8, 'available');
+INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(14, 402, 8, 'available');
+INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(15, 403, 8, 'available');
+INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(16, 404, 8, 'available');
+INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(17, 501, 12, 'available');
+INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(18, 502, 12, 'available');
+INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(19, 503, 12, 'available');
+INSERT INTO tables (rs_table_id, rs_number, rs_seats, rs_status) VALUES(20, 504, 12, 'available');
+
+
+

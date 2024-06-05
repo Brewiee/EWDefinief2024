@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QTableWidget,
 from PySide6.QtCore import QDateTime
 from pymysql import connect, cursors
 
-ICON_FOLDER = "../Icons/"
+ICON_FOLDER = "../../Icons/"
 
 class OrderManagement(QWidget):
     def __init__(self):

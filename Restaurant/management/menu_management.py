@@ -7,7 +7,7 @@ from PySide6.QtCore import QTimer
 from pymysql import connect, cursors
 from decimal import Decimal
 
-ICON_FOLDER = "../Icons/"
+ICON_FOLDER = "../../Icons/"
 ITEMS = ["Our Famous", "Greek Burgers", "Loaded Fries", "For the Team", "Kids menu", "Starter Bites", "Siders", "Drinks", "Traditionals"]
 
 class MenuManagement(QWidget):
