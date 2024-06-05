@@ -912,20 +912,31 @@ class InvoiceManagementApp(QMainWindow):
 
                 # Process each product in the invoice
                 for product in products_in_invoice:
-                    # Check if the product needs to be reordered
-                    if product['CR_Product_Stock_quantity'] < product['CR_Product_Min_Stock']:
-                        # Calculate reorder quantity
-                        reorder_quantity = product['CR_Product_Max_Stock'] - product['CR_Product_Stock_quantity']
+                    # Check if there is already a pending backorder for this product
+                    cursor.execute("""
+                        SELECT COUNT(*) 
+                        FROM Storage_Backorder 
+                        WHERE CR_StBackorder_Product_ID = %s 
+                        AND CR_StBackorder_Status = 'Pending'
+                    """, (product['CR_Product_Product_ID'],))
+                    pending_backorders = cursor.fetchone()['COUNT(*)']
 
-                        # Ask the user if they want to reorder the product
-                        reply = QMessageBox.question(self, 'Reorder Product',
-                                                     f"The stock quantity of {product['CR_Product_Name']} is lower than the minimum stock level. "
-                                                     f"Do you want to reorder {reorder_quantity} units of this product?",
-                                                     QMessageBox.Yes | QMessageBox.No)
+                    # If there are no pending backorders, proceed to check the stock level
+                    if pending_backorders == 0:
+                        # Check if the product needs to be reordered
+                        if product['CR_Product_Stock_quantity'] < product['CR_Product_Min_Stock']:
+                            # Calculate reorder quantity
+                            reorder_quantity = product['CR_Product_Max_Stock'] - product['CR_Product_Stock_quantity']
 
-                        # If the user confirms, save the reorder details
-                        if reply == QMessageBox.Yes:
-                            self.save_stbackorder(product['CR_Product_Product_ID'], reorder_quantity)
+                            # Ask the user if they want to reorder the product
+                            reply = QMessageBox.question(self, 'Reorder Product',
+                                                         f"The stock quantity of {product['CR_Product_Name']} is lower than the minimum stock level. "
+                                                         f"Do you want to reorder {reorder_quantity} units of this product?",
+                                                         QMessageBox.Yes | QMessageBox.No)
+
+                            # If the user confirms, save the reorder details
+                            if reply == QMessageBox.Yes:
+                                self.save_stbackorder(product['CR_Product_Product_ID'], reorder_quantity)
 
         except pymysql.Error as e:
             QMessageBox.critical(self, 'Error', f"Error checking backorders for invoice: {str(e)}")
