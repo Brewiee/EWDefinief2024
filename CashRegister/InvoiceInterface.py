@@ -492,13 +492,13 @@ class InvoiceManagementApp(QMainWindow):
             # Initialize additional details list
             self.additional_details_dict[row_position] = []
 
+            # Track the quantity and update stock temporarily
+            self.update_stock_temporary(product_id, quantity)
+
             # Clear product_input, quantity_input, and vat_input fields
             self.product_input.clear()
             self.quantity_input.clear()
             self.vat_input.setText("21")
-
-            # Track the quantity and update stock temporarily
-            self.update_stock_temporary(product_id, quantity)
 
             # Calculate and update total amount
             self.calculate_total()
