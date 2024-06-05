@@ -7,7 +7,7 @@ from PySide6.QtGui import QIcon
 from pymysql import connect, cursors
 from functools import partial
 
-ICON_FOLDER = "../../Icons/"
+ICON_FOLDER = "../Icons/"
 
 class CreateOrder(QMainWindow):
     # Signal to indicate that the order has been placed

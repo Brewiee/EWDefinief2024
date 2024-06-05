@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QDialog, QMessageBox
 from PySide6.QtCore import Signal
 from PySide6.QtGui import QIcon
 
-ICON_FOLDER = "../../Icons/"
+ICON_FOLDER = "../Icons/"
 
 class LockTheTable(QDialog):
     # Signal to indicate that the window is about to close

@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
 from PySide6.QtCore import Signal, QDate
 import pymysql
 
-ICON_FOLDER = "../../Icons/"
+ICON_FOLDER = "../Icons/"
 
 class CustomerWindow(QMainWindow):
     # Define a signal for when the window is closing

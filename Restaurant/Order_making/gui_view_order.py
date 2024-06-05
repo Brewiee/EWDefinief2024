@@ -7,7 +7,7 @@ from PySide6.QtGui import QStandardItemModel, QStandardItem
 from PySide6.QtCore import Signal
 from pymysql import connect, cursors
 
-ICON_FOLDER = "../../Icons/"
+ICON_FOLDER = "../Icons/"
 
 class ViewOrder(QMainWindow):
     # Define a custom signal for closing

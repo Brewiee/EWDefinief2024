@@ -9,7 +9,7 @@ from order_management import OrderManagement
 from table_management import TableManagementWidget
 from Reservation_management import ReservationManagement
 
-ICON_FOLDER = "../../Icons/"
+ICON_FOLDER = "../Icons/"
 class DashboardWindow(QMainWindow):
     def __init__(self):
         """

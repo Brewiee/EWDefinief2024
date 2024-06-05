@@ -249,6 +249,7 @@ class LoginDatabaseFunctions(QMainWindow):
                         if selected_module == "Vending":
                             self.current_sub_process = Popen(["python", "../vending/main.py"])
                         elif selected_module == "Restaurant" and self.user_type == 2:
+
                             self.current_sub_process = Popen(["python", "../restaurant/UI/MainMenuButtonsManager.py"])
                         elif selected_module == "Restaurant" and self.user_type == 3:
                             self.current_sub_process = Popen(["python", "../Restaurant/UI/MainMenuButtonsStaff.py"])

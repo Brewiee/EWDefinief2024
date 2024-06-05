@@ -7,7 +7,7 @@ from PySide6.QtCore import Qt, QUrl, QFile, QIODevice
 import os
 import subprocess
 
-ICON_FOLDER = "../../Icons/"
+ICON_FOLDER = "../../../Icons/"
 LOVE = "../../love.py"
 class LoveWindow(QWidget):
     def __init__(self, content):
@@ -39,7 +39,7 @@ class MainLayout(QWidget):
         # Create layout for logo and love label
         logo_layout = QHBoxLayout()
         self.logo_label = QLabel()
-        logo_pixmap = QPixmap("address.png")
+        logo_pixmap = QPixmap("website.png")
         if not logo_pixmap.isNull():
             self.logo_label.setPixmap(logo_pixmap.scaled(150, 150, Qt.KeepAspectRatio, Qt.SmoothTransformation))
             logo_layout.addWidget(self.logo_label, alignment=Qt.AlignRight | Qt.AlignTop)  # Align logo to top right

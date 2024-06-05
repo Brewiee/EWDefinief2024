@@ -5,7 +5,7 @@ from PySide6.QtCore import Qt
 import subprocess
 import os
 
-ICON_FOLDER = "../../Icons/"
+ICON_FOLDER = "../Icons/"
 
 class Dashboard(QWidget):
     def __init__(self):
@@ -14,7 +14,8 @@ class Dashboard(QWidget):
 
     def initUI(self):
         self.setWindowTitle('Dashboard')
-        self.setWindowIcon(QIcon("favicon.png"))  # Set window icon
+        icon_path = os.path.join(ICON_FOLDER, "favicon.png")
+        self.setWindowIcon(QIcon(icon_path))
         self.setGeometry(100, 100, 1920, 1080)  # Set window size to 1080p
 
         # Create main layout
@@ -54,16 +55,14 @@ class Dashboard(QWidget):
 
             button.clicked.connect(self.open_los)
 
-
             label_widget = QLabel(label)
             label_widget.setAlignment(Qt.AlignCenter)
             layout.addWidget(label_widget, row*2+1, col, 1, 1, Qt.AlignCenter)
 
-
     def open_los(self):
         try:
             # Get the absolute path to the script
-            script_path = os.path.abspath("../Order_making/gui_table.py")
+            script_path = os.path.abspath("../Restaurant/Order_making/gui_table.py")
             # Run the script using subprocess.Popen
             subprocess.Popen(["python", script_path])
 

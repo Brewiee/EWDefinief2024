@@ -8,7 +8,7 @@ from pymysql import connect, cursors
 from datetime import datetime
 from Make_Reservations import CustomerWindow
 
-ICON_FOLDER = "../../Icons/"
+ICON_FOLDER = "../Icons/"
 
 class UpdateReservationDialog(QDialog):
     dialogClosed = Signal()

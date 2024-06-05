@@ -7,7 +7,7 @@ from PySide6.QtCore import Signal, QDateTime
 from pymysql import connect, cursors
 from functools import partial
 
-ICON_FOLDER = "../../Icons/"
+ICON_FOLDER = "./Icons/"
 
 class UpdateOrder(QMainWindow):
     # Signal to indicate that the order has been updated
